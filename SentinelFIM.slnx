@@ -1,3 +1,5 @@
 <Solution>
-  <Project Path="SentinelFIM/SentinelFIM.csproj" />
+  <Project Path="SentinelFIM.Console/SentinelFIM.Console.csproj" Id="c6883d95-761a-46c9-b29b-9a2cf8afd418" />
+  <Project Path="SentinelFIM.Core/SentinelFIM.Core.csproj" />
+  <Project Path="SentinelFIM.Maui/SentinelFIM.Maui.csproj" />
 </Solution>
