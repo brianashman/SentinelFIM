@@ -1,31 +1,69 @@
 # SentinelFIM
 
-SentinelFIM is a File Integrity Monitoring (FIM) tool written in C# and .NET.
+SentinelFIM is a cross-platform File Integrity Monitoring (FIM) platform built with C# and .NET.
 
-The project uses SHA256 hashing and real-time filesystem monitoring to detect unauthorized file modifications, deletions, and creations.
+The project uses cryptographic hashing and real-time filesystem monitoring to detect unauthorized file modifications, deletions, and creations. SentinelFIM is designed as a security-focused application with support for reusable core services, multiple client interfaces, extensible reporting, and scalable monitoring capabilities.
 
 ## Features
+
+### Integrity Monitoring
 
 - SHA256 cryptographic hashing
 - Baseline generation
 - Baseline comparison
-- Real-time monitoring with FileSystemWatcher
-- Console output
-- Multiple supported export formats (JSON, XML, CSV, etc)
+- File modification detection
+- File creation detection
+- File deletion detection
+- Real-time monitoring using FileSystemWatcher
+
+### Reporting
+
+- JSON export support
+- XML export support
+- CSV export support
+- Structured monitoring output
+- Extensible export architecture
+
+### Platform Support
+
+- Shared .NET core architecture
+- Command-line interface support
+- Planned desktop GUI support
+- Planned mobile GUI support
+- Cross-platform design
 
 ## Architecture
 
-- Event-driven monitoring
-- SHA256 integrity validation
-- Modular export system
-- Extensible output formats
+SentinelFIM follows a shared-core architecture that separates monitoring, hashing, reporting, and client functionality.
+
+The monitoring engine is designed around event-driven principles, allowing multiple interfaces to consume the same core services while maintaining a consistent monitoring experience across platforms.
+
+Current areas of focus include:
+
+- Real-time monitoring
+- Concurrent directory monitoring
+- High-performance scanning
+- Extensible reporting
+- Cross-platform client support
+
+## Technical Highlights
+
+- C#
+- .NET
+- SHA256
+- FileSystemWatcher
+- Event-driven architecture
+- Dependency Injection
+- Concurrent processing
+- Parallelized scanning
+- Cross-platform application development
 
 ## Status
 
-Current Version: 0.1.0
+**Version:** 0.1.0
 
-Under active development.
+SentinelFIM is currently under active development as a long-term security engineering project focused on filesystem monitoring, performance, architecture, and cross-platform application design.
 
 ## License
 
-MIT
+MIT License
