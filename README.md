@@ -69,6 +69,8 @@ Current areas of focus include:
 - Extensible reporting
 - Cross-platform client support
 
+> A more detailed architectural overview can be found in `docs/architecture-overview.md`
+
 ## Current Scope
 
 SentinelFIM currently focuses on monitoring individual files.
