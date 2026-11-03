@@ -1,10 +1,13 @@
 ﻿using SentinelFIM.Core.File;
+using SentinelFIM.Core.Identifiers;
 
 namespace SentinelFIM.Infrastructure.File
 {
 	public class FileSystemProvider : IFileProvider
 	{
-		public IEnumerable<string> EnumeratePaths(string path, SearchOption searchOption)
+		public string FileProvider => FileProviderType.FileSystem;
+
+		public IEnumerable<string> EnumeratePaths(string path, string EnumerationSearchOption)
 		{
 			throw new NotImplementedException();
 		}
