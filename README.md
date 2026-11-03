@@ -29,8 +29,8 @@ The project uses cryptographic hashing and real-time filesystem monitoring to de
 - Cross-platform design
 
 ## Architecture
-![Architecture](docs/architecture.svg)
-> The editable source for this diagram can be found in `docs/SentinelFIM.excalidraw` and can be opened using [Excalidraw](https://excalidraw.com/).
+![Architecture](docs/Excalidraw/architecture.svg)
+> The editable source for this diagram can be found in `docs/Excalidraw/SentinelFIM.excalidraw` and can be opened using [Excalidraw](https://excalidraw.com/).
 
 SentinelFIM follows a shared, layered, contract-driven architecture that separates monitoring, hashing, reporting, and client functionality.
 
