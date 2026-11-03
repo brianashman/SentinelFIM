@@ -29,6 +29,7 @@ The project uses cryptographic hashing and real-time filesystem monitoring to de
 - Cross-platform design
 
 ## Architecture
+![Architecture](docs/architecture.svg)
 
 SentinelFIM follows a shared, layered, contract-driven architecture that separates monitoring, hashing, reporting, and client functionality.
 
