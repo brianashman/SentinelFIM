@@ -1,0 +1,37 @@
+graph LR
+
+    subgraph Applications
+        Console["SentinelFIM.Console"]
+        Maui["SentinelFIM.Maui"]
+    end
+
+    subgraph Core["SentinelFIM.Core"]
+        Baseline["Baseline"]
+        Monitoring["Monitoring"]
+        Hashing["Hashing"]
+        File["File"]
+        Export["Export"]
+        Models["Models"]
+    end
+
+    subgraph Infrastructure["SentinelFIM.Infrastructure"]
+        BaselineImpl["Baseline Implementation"]
+        MonitoringImpl["Monitoring Implementation"]
+        HashingImpl["Hashing Implementation"]
+        FileImpl["File Implementation"]
+        ExportImpl["Export Implementation"]
+    end
+
+    Console --> Core
+    Maui --> Core
+
+    Console --> Infrastructure
+    Maui --> Infrastructure
+
+    Infrastructure --> Core
+
+    BaselineImpl --> Baseline
+    MonitoringImpl --> Monitoring
+    HashingImpl --> Hashing
+    FileImpl --> File
+    ExportImpl --> Export
