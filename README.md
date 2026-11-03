@@ -18,15 +18,11 @@ The project uses cryptographic hashing and real-time filesystem monitoring to de
 
 ### Reporting
 
-- JSON export support
-- XML export support
-- CSV export support
+- Planned JSON, TXT, YAML, XML, CSV export support
 - Structured monitoring output
 - Extensible export architecture
 
 ### Platform Support
-
-- Shared .NET core architecture
 - Command-line interface support
 - Planned desktop GUI support
 - Planned mobile GUI support
@@ -34,7 +30,7 @@ The project uses cryptographic hashing and real-time filesystem monitoring to de
 
 ## Architecture
 
-SentinelFIM follows a shared-core architecture that separates monitoring, hashing, reporting, and client functionality.
+SentinelFIM follows a shared, layered, contract-driven architecture that separates monitoring, hashing, reporting, and client functionality.
 
 The monitoring engine is designed around event-driven principles, allowing multiple interfaces to consume the same core services while maintaining a consistent monitoring experience across platforms.
 
