@@ -1,7 +1,9 @@
-﻿namespace SentinelFIM.Core.Export
+﻿using SentinelFIM.Core.Models;
+
+namespace SentinelFIM.Core.Export
 {
 	public interface IExporter
 	{
-		void Export(SentinelFIM.Core.Models.ScanResult result);
+		void Export(ScanResult result);
 	}
 }

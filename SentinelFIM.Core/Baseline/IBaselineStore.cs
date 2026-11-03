@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SentinelFIM.Core.Services
+namespace SentinelFIM.Core.Baseline
 {
-	public class BaselineManager
+	public interface IBaselineStore
 	{
 	}
 }

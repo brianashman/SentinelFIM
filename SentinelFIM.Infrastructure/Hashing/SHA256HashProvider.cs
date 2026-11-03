@@ -1,6 +1,7 @@
-﻿using System.Security.Cryptography;
+﻿using SentinelFIM.Core.Hashing;
+using System.Security.Cryptography;
 
-namespace SentinelFIM.Core.Hashing.HashProviders
+namespace SentinelFIM.Infrastructure.Hashing
 {
 	public class SHA256HashProvider : IHashProvider
 	{

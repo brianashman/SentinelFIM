@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SentinelFIM.Core.Export.Exporters
+namespace SentinelFIM.Infrastructure.Services
 {
-	internal class CsvExporter
+	public class JsonBaselineStore
 	{
 	}
 }
