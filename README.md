@@ -65,10 +65,29 @@ The monitoring engine is designed around event-driven principles, allowing multi
 Current areas of focus include:
 
 - Real-time monitoring
-- Concurrent directory monitoring
-- High-performance scanning
+- Multiple independent monitoring sessions
 - Extensible reporting
 - Cross-platform client support
+
+> A more detailed architectural overview can be found in `docs/architecture-overview.md`
+
+## Current Scope
+
+SentinelFIM currently focuses on monitoring individual files.
+
+Supported:
+
+- Single-file baseline generation
+- Single-file integrity monitoring
+- Real-time change detection
+- Multiple independent monitoring sessions
+
+Planned:
+
+- Directory monitoring
+- Recursive directory scanning
+- Folder-based baseline generation
+- GUI-based monitor management
 
 ## Technical Highlights
 
@@ -87,6 +106,8 @@ Current areas of focus include:
 **Version:** 0.1.0
 
 SentinelFIM is currently under active development as a long-term security engineering project focused on filesystem monitoring, performance, architecture, and cross-platform application design.
+
+Current releases are focused on single-file integrity monitoring. Directory monitoring, recursive scanning, and advanced monitoring capabilities are planned for future versions.
 
 ## License
 
