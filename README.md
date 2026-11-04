@@ -1,8 +1,10 @@
 # SentinelFIM
 
-SentinelFIM is a cross-platform File Integrity Monitoring (FIM) platform built with C# and .NET.
+SentinelFIM is a cross-platform File Integrity Monitoring (FIM) platform built with C# and .NET that detects unauthorized file changes through cryptographic hashing and real-time filesystem monitoring.
 
-The project uses cryptographic hashing and real-time filesystem monitoring to detect unauthorized file modifications, deletions, and creations. SentinelFIM is designed as a security-focused application with support for reusable core services, multiple client interfaces, extensible reporting, and scalable monitoring capabilities.
+Designed using a layered, contract-driven architecture, SentinelFIM separates monitoring, hashing, reporting, and client functionality into independent components, allowing new monitoring providers, reporting formats, and user interfaces to be added with minimal changes to existing code.
+
+The project serves as both a practical security tool and a software engineering project focused on maintainable architecture, dependency injection, extensibility, concurrent processing, and cross-platform application development.
 
 ## Features
 
@@ -91,15 +93,14 @@ Planned:
 
 ## Technical Highlights
 
-- C#
-- .NET
-- SHA256
-- FileSystemWatcher
-- Event-driven architecture
+- Layered Architecture
 - Dependency Injection
-- Concurrent processing
-- Parallelized scanning
-- Cross-platform application development
+- Event-Driven Design
+- Runtime Provider Resolution
+- Concurrent Processing
+- Parallelized File Scanning
+- Cross-Platform .NET Development
+- Cryptographic Integrity Verification
 
 ## Status
 
