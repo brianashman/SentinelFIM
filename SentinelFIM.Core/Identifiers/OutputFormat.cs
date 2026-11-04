@@ -6,9 +6,9 @@ namespace SentinelFIM.Core.Identifiers
 {
 	public static class OutputFormat
 	{
-		public const string Console = "Console";
-		public const string Json = "Json";
-		public const string Text = "Text";
-		public const string CSV = "CSV";
+		public const string Console = "console";
+		public const string Json = "json";
+		public const string Text = "text";
+		public const string CSV = "csv";
 	}
 }

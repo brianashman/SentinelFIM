@@ -6,8 +6,8 @@ namespace SentinelFIM.Core.Identifiers
 {
 	public static class FileProviderType
 	{
-		public const string FileSystem = "FileSystem";
-		public const string Network = "Network";
-		public const string Cloud = "Cloud";
+		public const string FileSystem = "filesystem";
+		public const string Network = "network";
+		public const string Cloud = "cloud";
 	}
 }

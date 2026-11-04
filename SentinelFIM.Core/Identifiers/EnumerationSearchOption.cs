@@ -6,7 +6,7 @@ namespace SentinelFIM.Core.Identifiers
 {
 	public static class EnumerationSearchOption
 	{
-		public const string AllDirectories = "AllDirectories";
-		public const string RootOnly = "RootOnly";
+		public const string AllDirectories = "alldirectories";
+		public const string RootOnly = "rootonly";
 	}
 }

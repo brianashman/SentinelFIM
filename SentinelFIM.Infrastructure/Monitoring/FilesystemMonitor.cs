@@ -2,7 +2,7 @@
 
 namespace SentinelFIM.Infrastructure.Monitoring
 {
-	public class FileSystemWatcherMonitor : IFileMonitor
+	public class FilesystemMonitor : IFileMonitor
 	{
 		public Task StartAsync(string path, CancellationToken cancellationToken)
 		{
