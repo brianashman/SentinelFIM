@@ -156,4 +156,31 @@ Current capabilities include:
 - File deletion detection
 - Real-time monitoring using FileSystemWatcher
 
-The monitoring engine is designed
+The monitoring engine is designed to support future expansion into directory monitoring, recursive scanning, additional monitoring providers, and alternative event sources while maintaining the same Core contracts and service resolution model.
+<br>
+
+Future enhancements may include:
+
+- Directory baseline generation
+- Recursive folder monitoring
+- Network share monitoring
+- Alternative filesystem event providers
+- Concurrent monitoring operations
+- Distributed monitoring agents
+
+# Design Principles
+<br>
+
+Several architectural principles guide SentinelFIM's design:
+
+- Separation of Concerns
+- Dependency Inversion
+- Open/Closed Principle
+- Composition over Inheritance
+- Interface-Driven Development
+- Dependency Injection
+- Extensibility Through Discovery
+
+<br>
+
+By centering the application around contracts defined in Core and resolving implementations through Dependency Injection at runtime, SentinelFIM remains modular, testable, and easily extensible without requiring modifications to existing business logic.
