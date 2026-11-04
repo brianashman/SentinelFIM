@@ -1,40 +1,20 @@
 # SentinelFIM
 
-SentinelFIM is a cross-platform File Integrity Monitoring (FIM) platform built with C# and .NET that detects unauthorized file changes through cryptographic integrity verification and real-time filesystem monitoring.
+SentinelFIM is a cross-platform File Integrity Monitoring (FIM) platform built with C# and .NET that detects unauthorized file changes through cryptographic verification and real-time monitoring.
 
-Designed using a layered, contract-driven architecture, SentinelFIM separates monitoring, hashing, reporting, and client functionality into independent components, allowing new monitoring providers, hashing algorithms, reporting formats, and user interfaces to be added with minimal changes to existing code.
+The platform establishes a trusted baseline for monitored files and continuously validates their integrity, allowing it to detect modifications, deletions, and other unexpected changes that may indicate tampering, malware activity, or unauthorized access.
 
-The project serves as both a practical security tool and a software engineering project focused on maintainable architecture, dependency injection, extensibility, concurrent processing, and cross-platform application development.
+Built around a modular architecture, SentinelFIM separates monitoring, hashing, reporting, and client functionality into independent components, making it easy to introduce new providers and interfaces without changing existing core functionality.
 
 ## Features
 
-### Integrity Monitoring
-
+- Real-time file monitoring
 - Cryptographic integrity verification
-- Baseline generation
-- Baseline comparison
-- File modification detection
-- File creation detection
-- File deletion detection
-- Real-time filesystem monitoring
-- Extensible hashing and monitoring provider architecture
-
-#### Current Implementations
-
-- SHA256 hashing provider
-- FileSystemWatcher monitoring provider
-
-### Reporting
-
-- Planned JSON, TXT, YAML, XML, and CSV export support
-- Structured monitoring output
-- Extensible export architecture
-
-### Platform Support
-
-- Command-line interface (CLI)
-- Planned desktop GUI support
-- Cross-platform design
+- Baseline generation and comparison
+- File creation, modification, and deletion detection
+- Multiple independent monitoring sessions
+- Extensible provider architecture
+- Cross-platform support
 
 ## Architecture
 
@@ -54,73 +34,44 @@ The project serves as both a practical security tool and a software engineering 
 </tr>
 </table>
 
-> The editable source for the Excalidraw diagram can be found in
-> `docs/Excalidraw/SentinelFIM.excalidraw` and can be opened using
-> [Excalidraw](https://excalidraw.com/).
+SentinelFIM follows a layered architecture that isolates security monitoring logic from infrastructure and user-facing applications. The core engine defines the contracts and workflows that drive integrity monitoring, while hashing, monitoring, reporting, and client implementations remain interchangeable.
 
-> The editable source for the Mermaid diagram can be found in
-> `docs/Mermaid/SentinelFIMLayeredArchitecture.mmd` and can be opened using
-> [Mermaid Live Editor](https://mermaid.live/).
-
-SentinelFIM follows a shared, layered, contract-driven architecture that separates monitoring, hashing, reporting, storage, and client functionality.
-
-The monitoring engine is designed around event-driven principles, allowing multiple interfaces to consume the same core services while maintaining a consistent monitoring experience across platforms.
-
-Current releases include SHA256 hashing and FileSystemWatcher monitoring providers. However, the platform is designed around provider abstractions that allow alternative implementations to be introduced without modifying existing Core business logic.
-
-Current areas of focus include:
-
-- Real-time monitoring
-- Multiple independent monitoring sessions
-- Extensible reporting
-- Provider-based architecture
-- Cross-platform client support
+This approach allows new functionality to be added without modifying existing monitoring logic and enables multiple clients to share the same monitoring engine.
 
 > A more detailed architectural overview can be found in `docs/architecture-overview.md`
 
-## Current Scope
+## Current Capabilities
 
-SentinelFIM currently focuses on monitoring individual files.
-
-### Supported
-
+- SHA-256 hashing
+- FileSystemWatcher monitoring
 - Single-file baseline generation
-- Single-file integrity monitoring
-- Real-time change detection
-- Multiple independent monitoring sessions
+- Real-time integrity monitoring
+- Multiple monitoring sessions
 
-### Planned
+## Planned
 
 - Directory monitoring
-- Recursive directory scanning
-- Folder-based baseline generation
+- Recursive scanning
 - Additional hashing providers
 - Additional monitoring providers
-- Additional export providers
-- GUI-based monitor management
+- Export providers
+- Desktop GUI
 
-## Technical Highlights
+## Technology
 
 - C#
 - .NET
-- Layered Architecture
-- Contract-Driven Design
 - Dependency Injection
-- Runtime Provider Resolution
-- Event-Driven Design
-- Provider-Based Extensibility
+- Layered Architecture
+- Provider-Based Design
+- Event-Driven Monitoring
 - Concurrent Processing
-- Parallelized File Scanning
-- Cryptographic Integrity Verification
-- Cross-Platform Application Development
 
 ## Status
 
 **Version:** 0.1.0
 
-SentinelFIM is currently under active development as a long-term security engineering project focused on filesystem monitoring, software architecture, extensibility, performance, and cross-platform application design.
-
-Current releases focus on single-file integrity monitoring, while directory monitoring, recursive scanning, additional providers, and advanced monitoring capabilities are planned for future versions.
+SentinelFIM is an active security engineering project focused on file integrity monitoring, tamper detection, and extensible monitoring systems.
 
 ## License
 
