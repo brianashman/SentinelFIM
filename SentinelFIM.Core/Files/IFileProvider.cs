@@ -7,7 +7,7 @@ namespace SentinelFIM.Core.Files
 {
 	public interface IFileProvider
 	{
-		string FileProvider { get; }
+		string ProviderType { get; }
 		IEnumerable<string> EnumeratePaths(string path, string searchOption);
 		Stream OpenRead(string path);
 	}

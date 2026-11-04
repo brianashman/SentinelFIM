@@ -5,7 +5,7 @@ namespace SentinelFIM.Infrastructure.Files
 {
 	public class FileSystemProvider : IFileProvider
 	{
-		public string FileProvider => FileProviderType.FileSystem;
+		public string ProviderType => FileProviderType.FileSystem;
 
 		public IEnumerable<string> EnumeratePaths(string path, string searchOption)
 		{
