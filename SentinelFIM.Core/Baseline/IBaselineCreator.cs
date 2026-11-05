@@ -4,6 +4,7 @@ namespace SentinelFIM.Core.Baseline
 {
 	public interface IBaselineCreator
 	{
-		IEnumerable<ScanResult> CreateBaseline(string path);
+		IEnumerable<ScanResult> CreateDirectoryBaseline(string directoryPath, string algorithm);
+		ScanResult CreateFileBaseline(string path, string algorithm);
 	}
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SentinelFIM.Core.Identifiers
+namespace SentinelFIM.Core.Models
 {
 	public static class EnumerationSearchOption
 	{
