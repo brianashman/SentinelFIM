@@ -1,17 +1,16 @@
 ﻿using Microsoft.Extensions.Logging;
-using SentinelFIM.Core.Baseline;
 using SentinelFIM.Core.Files;
 using SentinelFIM.Core.Hashing;
 using SentinelFIM.Core.Models;
 
 namespace SentinelFIM.Infrastructure.Baseline.Creator
 {
-	public class JSONBaselineCreator : IBaselineCreator
+	public class BaselineCreator 
 	{
-		private readonly ILogger<JSONBaselineCreator> _logger;
+		private readonly ILogger<BaselineCreator> _logger;
 		private readonly IFileProvider _fileProvider;
 		private readonly IHashProvider _hashProvider;
-		public JSONBaselineCreator(ILogger<JSONBaselineCreator> logger, IFileProvider fileProvider, IHashProvider hashProvider)
+		public BaselineCreator(ILogger<BaselineCreator> logger, IFileProvider fileProvider, IHashProvider hashProvider)
 		{
 			_logger = logger;
 			_fileProvider = fileProvider;
@@ -36,7 +35,6 @@ namespace SentinelFIM.Infrastructure.Baseline.Creator
 			FileInfo info = new(path);
 
 			if(!info.Exists) throw new FileNotFoundException("File not found: " + path);
-
 			using Stream stream = File.OpenRead(path);
 
 			return new ScanResult
