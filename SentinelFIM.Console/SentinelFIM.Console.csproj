@@ -14,4 +14,9 @@
     <PackageReference Include="Spectre.Console" Version="0.57.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SentinelFIM.Core\SentinelFIM.Core.csproj" />
+    <ProjectReference Include="..\SentinelFIM.Infrastructure\SentinelFIM.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -35,19 +35,19 @@ namespace SentinelFIM.Infrastructure.Files
 				_logger.LogInformation("Enumerated {count} files in directory: {path}", result.Length, path);
 			}
 
-			catch (UnauthorizedAccessException ex)
+			catch (UnauthorizedAccessException)
 			{
-				_logger.LogWarning(ex, "Access denied to directory: {path}", path);
+				_logger.LogWarning("Access denied to directory: {path}", path);
 				throw;
 			}
-			catch (PathTooLongException ex)
+			catch (PathTooLongException)
 			{
-				_logger.LogError(ex, "The specified path is too long: {path}", path);
+				_logger.LogError("The specified path is too long: {path}", path);
 				throw;
 			}
-			catch (IOException ex)
+			catch (IOException)
 			{
-				_logger.LogError(ex, "An I/O error occurred while accessing the directory: {path}", path);
+				_logger.LogError("An I/O error occurred while accessing the directory: {path}", path);
 				throw;
 			}
 			return result;

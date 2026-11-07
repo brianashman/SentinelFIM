@@ -1,0 +1,21 @@
+﻿using SentinelFIM.Core.Baseline;
+using SentinelFIM.Core.Models;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace SentinelFIM.Console.Commands
+{
+	public class CreateBaselineCommand
+	{
+		private readonly IBaselineStore _baselineStore;
+		public CreateBaselineCommand(IBaselineStore baselineStore)
+		{
+			_baselineStore = baselineStore;
+		}
+		public void Execute(string path, string outputFile, BaselineScanType scanType)
+		{
+			_baselineStore.SaveBaseline(path, outputFile, scanType);
+		}
+	}
+}

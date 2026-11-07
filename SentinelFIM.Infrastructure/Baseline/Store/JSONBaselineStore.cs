@@ -45,7 +45,7 @@ namespace SentinelFIM.Infrastructure.Baseline.Store
 			return scanResults!;	
 		}
 
-		public void SaveBaseline(string path, BaselineScanType scanType)
+		public void SaveBaseline(string path, string outputFile, BaselineScanType scanType)
 		{
 			IEnumerable<ScanResult> baseline = scanType switch
 			{
@@ -55,36 +55,21 @@ namespace SentinelFIM.Infrastructure.Baseline.Store
 			};
 			try
 			{
-				_logger.LogInformation("Saving baseline to file: {0}", path);
-				using (StreamWriter writer = new(path))
+				_logger.LogInformation("Attempting to save baseline to file: {0}", path);
+				var serializerOptions = new JsonSerializerOptions
 				{
-					var serializerOptions = new JsonSerializerOptions
-					{
-						PropertyNameCaseInsensitive = true,
-						WriteIndented = true
-					};
-					string json = JsonSerializer.Serialize(baseline, serializerOptions);
+					PropertyNameCaseInsensitive = true,
+					WriteIndented = true
+				};
+				string json = JsonSerializer.Serialize(baseline, serializerOptions);
+				using (StreamWriter writer = new(outputFile))
+				{
 					writer.Write(json);
 				}
 			}
-			catch (UnauthorizedAccessException ex)
+			catch (Exception)
 			{
-				_logger.LogError(ex, "Failed to save baseline file (Unauthorized): {0}", path);
-				throw;
-			}
-			catch (PathTooLongException ex)
-			{
-				_logger.LogError(ex, "Failed to save file (Path Too Long): {0}", path);
-				throw;
-			}
-			catch (IOException ex)
-			{
-				_logger.LogError(ex, "Failed to save baseline file (IO Exception): {0}", path);
-				throw;
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex, "Failed to save baseline file: {0}", path);
+				_logger.LogError("Failed to save baseline file: {0}", path);
 				throw;
 			}
 			_logger.LogInformation("Baseline saved successfully to file: {0}", path);
