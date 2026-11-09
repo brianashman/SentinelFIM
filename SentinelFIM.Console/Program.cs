@@ -45,6 +45,5 @@ try
 }
 catch(Exception ex)
 {
-	tempLogger.LogError("An error occurred while executing the command. Please check the logs below for more details:");
 	tempLogger.LogError($"Error details: {ex.Message}");
 }

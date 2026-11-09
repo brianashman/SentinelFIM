@@ -62,7 +62,7 @@ namespace SentinelFIM.Infrastructure.Baseline.Store
 				if (baseline.Count == 0)
 				{
 					_logger.LogWarning("No baseline data to save.");
-					throw new InvalidOperationException("No baseline data to save.");
+					return (0, String.Empty);
 				}
 				var serializerOptions = new JsonSerializerOptions
 				{
