@@ -49,6 +49,7 @@ namespace SentinelFIM.Infrastructure.Baseline.Store
 		public (int filesSaved, string outputPath) SaveBaseline(string path, string outputFile, BaselineScanType scanType)
 		{
 			var currentDirectory = Directory.GetCurrentDirectory();
+			var createdOutputFile = Path.Combine(currentDirectory, outputFile);
 			List<ScanResult> baseline = scanType switch
 			{
 				BaselineScanType.Directory => [.. _baselineCreator.CreateDirectoryBaseline(path)],
@@ -57,30 +58,26 @@ namespace SentinelFIM.Infrastructure.Baseline.Store
 			};
 			try
 			{
-				_logger.LogInformation("Attempting to save baseline to path: {OutputPath}", Path.Combine(currentDirectory, outputFile));
+				_logger.LogInformation("Attempting to save baseline to path: {OutputPath}", createdOutputFile);
+				if (baseline.Count == 0)
+				{
+					_logger.LogWarning("No baseline data to save.");
+					throw new InvalidOperationException("No baseline data to save.");
+				}
 				var serializerOptions = new JsonSerializerOptions
 				{
 					PropertyNameCaseInsensitive = true,
 					WriteIndented = true
 				};
-				FileStream fileStream = new(Path.Combine(currentDirectory, outputFile), FileMode.Create, FileAccess.Write);
+				using FileStream fileStream = new(createdOutputFile, FileMode.Create, FileAccess.Write);
 				JsonSerializer.Serialize(fileStream, baseline, serializerOptions);
 			}
 			catch (Exception)
 			{
-				_logger.LogError("Failed to save baseline file: {Path}", Path.Combine(currentDirectory, outputFile));
+				_logger.LogError("Failed to save baseline file: {Path}", createdOutputFile);
 				throw;
 			}
-			if (File.Exists(outputFile))
-			{
-				_logger.LogInformation("Baseline saved successfully to file: {OutputPath}", Path.Combine(currentDirectory, outputFile));
-			}
-			else
-			{
-				_logger.LogError("Failed to save baseline file: {OutputPath}", Path.Combine(currentDirectory, outputFile));
-				throw new IOException($"Failed to save baseline file: {Path.Combine(currentDirectory, outputFile)}");
-			}
-			return (baseline.Count, Path.Combine(currentDirectory, outputFile));
+			return (baseline.Count, createdOutputFile);
 		}
 	}
 }
