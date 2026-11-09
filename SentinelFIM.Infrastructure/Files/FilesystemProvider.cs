@@ -32,7 +32,14 @@ namespace SentinelFIM.Infrastructure.Files
 					EnumerationSearchOption.RootOnly => Directory.GetFiles(path, "*", SearchOption.TopDirectoryOnly),
 					_ => throw new ArgumentOutOfRangeException(nameof(searchOption), searchOption, null),
 				};
-				_logger.LogInformation("Enumerated {count} files in directory: {path}", result.Length, path);
+				if(result.Count() > 0)
+				{
+					_logger.LogInformation("Enumerated {count} files in directory: {path}", result.Length, path);
+				}
+				else
+				{
+					_logger.LogWarning("No files found in directory: {path}", path);
+				}
 			}
 
 			catch (UnauthorizedAccessException)

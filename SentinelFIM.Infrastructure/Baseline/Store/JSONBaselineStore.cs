@@ -10,6 +10,7 @@ namespace SentinelFIM.Infrastructure.Baseline.Store
 {
 	// Algorithm is autosupplied via DI container temporarily for baselinecreator.
 	// This class is responsible for saving and loading baseline data in JSON format.
+	// Note: Add a choice to choose a directory to save the file to if the baseline is created. (Baseline Saves to current directory only temporarily)
 	public class JsonBaselineStore : IBaselineStore
 	{
 		public string Format => OutputFormat.Json;
@@ -45,34 +46,41 @@ namespace SentinelFIM.Infrastructure.Baseline.Store
 			return scanResults!;	
 		}
 
-		public void SaveBaseline(string path, string outputFile, BaselineScanType scanType)
+		public (int filesSaved, string outputPath) SaveBaseline(string path, string outputFile, BaselineScanType scanType)
 		{
-			IEnumerable<ScanResult> baseline = scanType switch
+			var currentDirectory = Directory.GetCurrentDirectory();
+			List<ScanResult> baseline = scanType switch
 			{
-				BaselineScanType.Directory => _baselineCreator.CreateDirectoryBaseline(path),
-				BaselineScanType.File => new [] { _baselineCreator.CreateFileBaseline(path) },
+				BaselineScanType.Directory => [.. _baselineCreator.CreateDirectoryBaseline(path)],
+				BaselineScanType.File => [_baselineCreator.CreateFileBaseline(path)],
 				_ => throw new ArgumentException("Invalid value for scanType parameter", nameof(scanType))
 			};
 			try
 			{
-				_logger.LogInformation("Attempting to save baseline to file: {0}", path);
+				_logger.LogInformation("Attempting to save baseline to path: {OutputPath}", Path.Combine(currentDirectory, outputFile));
 				var serializerOptions = new JsonSerializerOptions
 				{
 					PropertyNameCaseInsensitive = true,
 					WriteIndented = true
 				};
-				string json = JsonSerializer.Serialize(baseline, serializerOptions);
-				using (StreamWriter writer = new(outputFile))
-				{
-					writer.Write(json);
-				}
+				FileStream fileStream = new(Path.Combine(currentDirectory, outputFile), FileMode.Create, FileAccess.Write);
+				JsonSerializer.Serialize(fileStream, baseline, serializerOptions);
 			}
 			catch (Exception)
 			{
-				_logger.LogError("Failed to save baseline file: {0}", path);
+				_logger.LogError("Failed to save baseline file: {Path}", Path.Combine(currentDirectory, outputFile));
 				throw;
 			}
-			_logger.LogInformation("Baseline saved successfully to file: {0}", path);
+			if (File.Exists(outputFile))
+			{
+				_logger.LogInformation("Baseline saved successfully to file: {OutputPath}", Path.Combine(currentDirectory, outputFile));
+			}
+			else
+			{
+				_logger.LogError("Failed to save baseline file: {OutputPath}", Path.Combine(currentDirectory, outputFile));
+				throw new IOException($"Failed to save baseline file: {Path.Combine(currentDirectory, outputFile)}");
+			}
+			return (baseline.Count, Path.Combine(currentDirectory, outputFile));
 		}
 	}
 }

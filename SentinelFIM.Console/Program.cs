@@ -37,7 +37,7 @@ var host = builder.Build();
 var runcommand = host.Services.GetRequiredService<CreateBaselineCommand>();
 var tempLogger = host.Services.GetRequiredService<SentinelFIM.Console.Temporary.TempLogger>();
 
-string path = "fewefefwwef";
+string path = @"C:\Users\beash\Test";
 string outputFile = "baseline.json";
 try
 {
