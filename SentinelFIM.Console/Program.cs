@@ -7,6 +7,8 @@ using SentinelFIM.Core.Models;
 using SentinelFIM.Infrastructure.Baseline.Creator;
 using SentinelFIM.Infrastructure.Baseline.Store;
 using SentinelFIM.Infrastructure.Hashing;
+using Spectre.Console.Cli;
+
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -21,29 +23,16 @@ builder.Services.AddSingleton<BaselineCreator>();
 //File provider name conflicts with an existing IFileProvider and FileSystemProvider
 //Used the full namespace for the interface as a compensating control
 builder.Services.AddSingleton<SentinelFIM.Core.Files.IFileProvider, SentinelFIM.Infrastructure.Files.FileSystemProvider>();
-
-//CLI Commands
-builder.Services.AddTransient<CreateBaselineCommand>();
-
-
-//Just temporarily for testing, will be removed later
-builder.Services.AddSingleton<SentinelFIM.Console.Temporary.TempLogger>();
 #endregion
 
+var registrar = new SentinelFIM.Console.Spectre.TypeRegistrar(builder.Services);
 
-var host = builder.Build();
-
-//Note to remove this later, this is just for testing the baseline creation command. Logger only has one parameter for now.
-var runcommand = host.Services.GetRequiredService<CreateBaselineCommand>();
-var tempLogger = host.Services.GetRequiredService<SentinelFIM.Console.Temporary.TempLogger>();
-
-string path = @"C:\Users\beash\Test";
-string outputFile = "baseline.json";
-try
+var app = new CommandApp(registrar);
+//Note to remove the testing command before release. It is only for testing purposes.
+app.Configure(config =>
 {
-	runcommand.Execute(path, outputFile, BaselineScanType.Directory);
-}
-catch(Exception ex)
-{
-	tempLogger.LogError($"Error details: {ex.Message}");
-}
+	config.SetApplicationName("SentinelFIM");
+	config.AddCommand<TestCommand>("test")
+		.WithDescription("this command is for testing purposes only");
+});
+return app.Run(args);

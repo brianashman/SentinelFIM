@@ -1,5 +1,6 @@
 ﻿using SentinelFIM.Core.Baseline;
 using SentinelFIM.Core.Models;
+using Spectre.Console.Cli;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,6 +16,7 @@ namespace SentinelFIM.Console.Commands
 		}
 		public void Execute(string path, string outputFile, BaselineScanType scanType)
 		{
+
 			_baselineStore.SaveBaseline(path, outputFile, scanType);
 		}
 	}

@@ -72,20 +72,20 @@ The architecture is designed to support long-term growth while maintaining a cle
 
 ## Current Scope
 
-SentinelFIM currently focuses on monitoring individual files.
+SentinelFIM currently focuses on monitoring individual files and directories.
 
 ### Supported
 
-- Single-file baseline generation
-- Single-file integrity monitoring
-- Real-time change detection
-- Multiple independent monitoring sessions
+- Baseline generation
+- Integrity monitoring
+- Folder-based baseline generation
+
 
 ### Planned
 
-- Directory monitoring
 - Recursive directory scanning
-- Folder-based baseline generation
+- Real-time change detection
+- Multiple independent monitoring sessions
 - Additional hashing providers
 - Additional monitoring providers
 - Additional export providers
