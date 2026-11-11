@@ -30,7 +30,6 @@ builder.Services.AddSingleton<SentinelFIM.Core.Files.IFileProvider, SentinelFIM.
 var registrar = new SentinelFIM.Console.Spectre.TypeRegistrar(builder.Services);
 
 var app = new CommandApp(registrar);
-//Note to remove the testing command before release. It is only for testing purposes.
 app.Configure(config =>
 {
 	config.SetApplicationName("sentinelfim");
