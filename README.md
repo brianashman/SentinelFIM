@@ -109,6 +109,12 @@ SentinelFIM currently focuses on scanning and generation baselines for files and
 
 SentinelFIM is an active security engineering project focused on file integrity monitoring, tamper detection, and extensible monitoring architectures.
 
+## Development Notes
+
+The architecture, application logic, and first-party source code for this project were designed and implemented manually.
+
+AI was used as a learning tool for conceptual explanations, architecture discussions, debugging assistance, and documentation support.
+
 ## License
 
 MIT License
