@@ -31,7 +31,7 @@ namespace SentinelFIM.Infrastructure.Baseline.Store
 
 			if(!baseline.Exists)
 			{
-				_logger.LogWarning("Baseline file not found: {0}", path);
+				_logger.LogWarning("Baseline file not found: {Path}", path);
 				throw new FileNotFoundException($"Baseline file not found: {path}");
 			}
 			var serializerOptions = new JsonSerializerOptions
@@ -39,7 +39,7 @@ namespace SentinelFIM.Infrastructure.Baseline.Store
 				PropertyNameCaseInsensitive = true,
 			};
 
-			_logger.LogInformation("Loading baseline from file: {0}", path);
+			_logger.LogInformation("Loading baseline from file: {Path}", path);
 			using var stream = baseline.OpenRead();
 			var scanResults = JsonSerializer.Deserialize<IEnumerable<ScanResult>>(
 				stream, 
@@ -60,18 +60,18 @@ namespace SentinelFIM.Infrastructure.Baseline.Store
 			List<ScanResult> baseline = new();
 			if (isDirectory)
 			{
-				_logger.LogInformation("Creating baseline for directory: {0}", path);
+				_logger.LogInformation("Creating baseline for directory: {Path}", path);
 				baseline.AddRange(_baselineCreator.CreateDirectoryBaseline(path));
 			}
 			else if (isFile)
 			{
-				_logger.LogInformation("Creating baseline for file: {0}", path);
+				_logger.LogInformation("Creating baseline for file: {Path}", path);
 				baseline.Add(_baselineCreator.CreateFileBaseline(path));
 			}
 			else
 			{
 				timer.Stop();
-				_logger.LogError("Path does not exist: {0}", path);
+				_logger.LogError("Path does not exist: {Path}", path);
 				throw new FileNotFoundException($"Path does not exist: {path}");
 			}
 			try
