@@ -27,6 +27,7 @@ namespace SentinelFIM.Console.Commands
 				.RoundedBorder()
 				.AddColumns("File")
 				.ShowFooters();
+			table.Columns[0].Footer = new Text($"Total: {count}");
 			AnsiConsole.Live(table)
 				.Start(ctx =>
 				{
@@ -40,7 +41,6 @@ namespace SentinelFIM.Console.Commands
 						}
 					}
 				});
-			table.Columns[0].Footer = new Text($"Total: {count}");
 
 		}
 		private void PreviewBaseline(string path)
