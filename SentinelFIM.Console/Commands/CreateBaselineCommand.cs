@@ -21,6 +21,28 @@ namespace SentinelFIM.Console.Commands
 			_fileProvider = fileProvider;
 		}
 		private void SaveBaseline(string path, string outputFile) => _baselineStore.SaveBaseline(path, outputFile);
+		private void DisplayEnumerationResults(List<string> values, int count)
+		{
+			var table =  new Table()
+				.RoundedBorder()
+				.AddColumns("File")
+				.ShowFooters();
+			AnsiConsole.Live(table)
+				.Start(ctx =>
+				{
+					int counter = 0;
+					foreach (var value in values)
+					{
+						table.AddRow(Markup.Escape(value));
+						if(++counter % 50 == 0)
+						{
+							ctx.Refresh();
+						}
+					}
+				});
+			table.Columns[0].Footer = new Text($"Total: {count}");
+
+		}
 		private void PreviewBaseline(string path)
 		{
 			Stopwatch timer = new();
@@ -32,19 +54,32 @@ namespace SentinelFIM.Console.Commands
 			//Reminder to add specific file provider to scan. (For Factory)
 			AnsiConsole.MarkupLine($"[yellow]Baseline preview for path: {path}[/]");
 			AnsiConsole.Status()
-				.Spinner(Spinner.Known.BetaWave)
+				.Spinner(Spinner.Known.Shark)
+				.SpinnerStyle(Style.Parse("green"))
 				.Start("Enumerating files...", ctx =>
 				{
 					values = [.. _fileProvider.EnumeratePaths(path, EnumerationSearchOption.AllDirectories)];
+					Task.Delay(1000).Wait(); // Add a small delay for testing purposes
 					ctx.Status("Done");
 					// Add a small delay for testing purposes
-					Task.Delay(500).Wait();
+					Task.Delay(1000).Wait();
 
 					timer.Stop();
-					AnsiConsole.MarkupLine($"[yellow]Time taken: [bold]{timer.Elapsed}[/]");
-					AnsiConsole.MarkupLine($"[yellow]Files processed: [bold]{values.Count}[/]");
+					AnsiConsole.WriteLine();
+
+
 				});
-			AnsiConsole.MarkupLine($"[green]Preview complete.[/]");
+			timer.Stop();
+			var count = values.Count;
+			AnsiConsole.MarkupLine($"[yellow]Time taken:[/] [bold]{timer.Elapsed}[/]");
+			AnsiConsole.MarkupLine($"[yellow]Files processed:[/] [bold]{count}[/]");
+			AnsiConsole.MarkupLine($"[green]Preview complete[/]");
+			AnsiConsole.WriteLine();
+
+			var answer = AnsiConsole.Ask<string>("Do you want to display the list of files? [blue](y/n):[/]");
+			if (answer == "y" || answer == "Y" || answer == "yes" || answer == "YES") DisplayEnumerationResults(values, count);
+			else AnsiConsole.WriteException(new ArgumentException($"Files not displayed, Invalid input: '{answer}'"));
+			return;
 		}
 
 		public override int Execute(CommandContext context, CreateBaselineSettings settings, CancellationToken cancellationToken)

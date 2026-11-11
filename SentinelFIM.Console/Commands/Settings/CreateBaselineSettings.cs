@@ -17,7 +17,7 @@ namespace SentinelFIM.Console.Commands.Settings
 		public string Path { get; init; }
 
 
-		[CommandOption("-v|--preview")]
+		[CommandOption("-p|--preview")]
 		[Description("Displays a summary of the baseline without saving it")]
 		public bool Preview { get; init; }
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using SentinelFIM.Console.Commands;
 using SentinelFIM.Core.Baseline;
 using SentinelFIM.Core.Hashing;
@@ -8,12 +9,13 @@ using SentinelFIM.Infrastructure.Baseline.Creator;
 using SentinelFIM.Infrastructure.Baseline.Store;
 using SentinelFIM.Infrastructure.Hashing;
 using Spectre.Console.Cli;
+using System.Linq.Expressions;
 
 
 var builder = Host.CreateApplicationBuilder(args);
 
-builder.Services.AddLogging();
-
+//builder.Services.AddLogging();
+builder.Logging.ClearProviders();
 
 #region Services
 //Infrastructure & Core Services
@@ -36,7 +38,9 @@ app.Configure(config =>
 	{
 		baseline.AddCommand<CreateBaselineCommand>("create")
 			.WithDescription("Creates a baseline of the specified path")
-			.WithExample("baseline create --Path", "C:\\path\\to\\scan C:\\path\\to\\output.json Full");
+			.WithExample("baseline create --Path", "C:\\path\\to\\scan",  "--output C:\\path\\to\\output.json");
 	});
 });
+
 return app.Run(args);
+
