@@ -4,6 +4,9 @@ using SentinelFIM.Core.Files;
 using SentinelFIM.Core.Identifiers;
 using SentinelFIM.Core.Models;
 using SentinelFIM.Infrastructure.Baseline.Creator;
+using System.Diagnostics;
+using System.Runtime.InteropServices.Marshalling;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 
 namespace SentinelFIM.Infrastructure.Baseline.Store
@@ -21,7 +24,6 @@ namespace SentinelFIM.Infrastructure.Baseline.Store
 			_logger = logger;
 			_baselineCreator = baselineCreator;
 		}
-
 
 		public IEnumerable<ScanResult> LoadBaseline(string path)
 		{
@@ -46,23 +48,39 @@ namespace SentinelFIM.Infrastructure.Baseline.Store
 			return scanResults!;	
 		}
 
-		public (int filesSaved, string outputPath) SaveBaseline(string path, string outputFile, BaselineScanType scanType)
+		public BaselineResults SaveBaseline(string path, string outputPath)
 		{
-			var currentDirectory = Directory.GetCurrentDirectory();
-			var createdOutputFile = Path.Combine(currentDirectory, outputFile);
-			List<ScanResult> baseline = scanType switch
+			Stopwatch timer = new();
+			string createdOutputFile = Path.GetFullPath(outputPath);
+
+			bool isDirectory = Directory.Exists(path);
+			bool isFile = File.Exists(path);
+
+			timer.Start();
+			List<ScanResult> baseline = new();
+			if (isDirectory)
 			{
-				BaselineScanType.Directory => [.. _baselineCreator.CreateDirectoryBaseline(path)],
-				BaselineScanType.File => [_baselineCreator.CreateFileBaseline(path)],
-				_ => throw new ArgumentException("Invalid value for scanType parameter", nameof(scanType))
-			};
+				_logger.LogInformation("Creating baseline for directory: {0}", path);
+				baseline.AddRange(_baselineCreator.CreateDirectoryBaseline(path));
+			}
+			else if (isFile)
+			{
+				_logger.LogInformation("Creating baseline for file: {0}", path);
+				baseline.Add(_baselineCreator.CreateFileBaseline(path));
+			}
+			else
+			{
+				timer.Stop();
+				_logger.LogError("Path does not exist: {0}", path);
+				throw new FileNotFoundException($"Path does not exist: {path}");
+			}
 			try
 			{
 				_logger.LogInformation("Attempting to save baseline to path: {OutputPath}", createdOutputFile);
 				if (baseline.Count == 0)
 				{
 					_logger.LogWarning("No baseline data to save.");
-					return (0, String.Empty);
+					return new BaselineResults(0, String.Empty, TimeSpan.Zero, 0);
 				}
 				var serializerOptions = new JsonSerializerOptions
 				{
@@ -71,13 +89,16 @@ namespace SentinelFIM.Infrastructure.Baseline.Store
 				};
 				using FileStream fileStream = new(createdOutputFile, FileMode.Create, FileAccess.Write);
 				JsonSerializer.Serialize(fileStream, baseline, serializerOptions);
+				timer.Stop();
 			}
 			catch (Exception)
 			{
 				_logger.LogError("Failed to save baseline file: {Path}", createdOutputFile);
+				timer.Stop();
 				throw;
 			}
-			return (baseline.Count, createdOutputFile);
+			long length = new FileInfo(createdOutputFile).Length;
+			return new BaselineResults(baseline.Count, createdOutputFile, timer.Elapsed, length);
 		}
 	}
 }

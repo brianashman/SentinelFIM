@@ -4,9 +4,5 @@ using System.Text;
 
 namespace SentinelFIM.Core.Models
 {
-	public enum BaselineScanType
-	{
-		File,
-		Directory
-	}
+	public record BaselineResults(int FilesSaved, string OutputPath, TimeSpan Duration, long TotalFileSize);
 }

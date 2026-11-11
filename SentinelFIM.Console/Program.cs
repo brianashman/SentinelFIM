@@ -31,8 +31,12 @@ var app = new CommandApp(registrar);
 //Note to remove the testing command before release. It is only for testing purposes.
 app.Configure(config =>
 {
-	config.SetApplicationName("SentinelFIM");
-	config.AddCommand<TestCommand>("test")
-		.WithDescription("this command is for testing purposes only");
+	config.SetApplicationName("sentinelfim");
+	config.AddBranch("baseline", baseline =>
+	{
+		baseline.AddCommand<CreateBaselineCommand>("create")
+			.WithDescription("Creates a baseline of the specified path")
+			.WithExample("baseline create --Path", "C:\\path\\to\\scan C:\\path\\to\\output.json Full");
+	});
 });
 return app.Run(args);
