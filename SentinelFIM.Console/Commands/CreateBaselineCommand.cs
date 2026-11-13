@@ -21,26 +21,32 @@ namespace SentinelFIM.Console.Commands
 			_fileProvider = fileProvider;
 		}
 		private void SaveBaseline(string path, string outputFile) => _baselineStore.SaveBaseline(path, outputFile);
-		private void DisplayEnumerationResults(List<string> values, int count)
+		private void DisplayEnumerationResults(IReadOnlyList<string> values, int count, string path)
 		{
-			var table =  new Table()
+			var directoryCount = values
+				.Select(Path.GetDirectoryName)
+				.Where(dir => !string.IsNullOrEmpty(dir))
+				.Distinct(StringComparer.OrdinalIgnoreCase)
+				.Count();
+
+			var table = new Table()
 				.RoundedBorder()
-				.AddColumns("File")
-				.ShowFooters();
-			table.Columns[0].Footer = new Text($"Total: {count}");
-			AnsiConsole.Live(table)
-				.Start(ctx =>
-				{
-					int counter = 0;
-					foreach (var value in values)
-					{
-						table.AddRow(Markup.Escape(value));
-						if(++counter % 50 == 0)
-						{
-							ctx.Refresh();
-						}
-					}
-				});
+				.BorderColor(Color.Green)
+				.AddColumn("Metric")
+				.AddColumn(new TableColumn("Value").RightAligned())
+				.AddColumn(new TableColumn("Description").LeftAligned());
+
+			table.AddRow("Files discovered", count.ToString("N0"), "The total number of files found in the specified path.");
+			table.AddRow("Directories discovered", directoryCount.ToString("N0"), "The total number of directories found in the specified path.");
+			AnsiConsole.MarkupLine($"[bold yellow]Enumeration Results:[/]");
+			AnsiConsole.Write(table);
+
+			AnsiConsole.WriteLine();
+			AnsiConsole.MarkupLine($"[bold yellow]Directory Tree:[/]");
+			//Note to implement later
+			//var tree = new Tree($"[blue]{Markup.Escape(path)} [/]");
+
+			AnsiConsole.Write(tree);
 
 		}
 		private void PreviewBaseline(string path)
@@ -59,10 +65,10 @@ namespace SentinelFIM.Console.Commands
 				.Start("Enumerating files...", ctx =>
 				{
 					values = [.. _fileProvider.EnumeratePaths(path, EnumerationSearchOption.AllDirectories)];
-					Task.Delay(1000).Wait(); // Add a small delay for testing purposes
+					Task.Delay(100).Wait(); // Add a small delay for testing purposes
 					ctx.Status("Done");
 					// Add a small delay for testing purposes
-					Task.Delay(1000).Wait();
+					Task.Delay(100).Wait();
 
 					timer.Stop();
 					AnsiConsole.WriteLine();
@@ -71,14 +77,20 @@ namespace SentinelFIM.Console.Commands
 				});
 			timer.Stop();
 			var count = values.Count;
-			AnsiConsole.MarkupLine($"[yellow]Time taken:[/] [bold]{timer.Elapsed}[/]");
+
+			// Display the time taken in a more readable format if the elapsed time is greater than 1 second
+			var timeFormat = timer.ElapsedMilliseconds switch
+			{
+				> 1000 => $"[yellow]Time taken:[/] [bold]{timer.ElapsedMilliseconds / 1000.0:F2}[/] s",
+				_ => $"[yellow]Time taken:[/] [bold]{timer.ElapsedMilliseconds}[/] ms",
+			};
+
+			AnsiConsole.MarkupLine(timeFormat);
 			AnsiConsole.MarkupLine($"[yellow]Files processed:[/] [bold]{count}[/]");
 			AnsiConsole.MarkupLine($"[green]Preview complete[/]");
 			AnsiConsole.WriteLine();
 
-			var answer = AnsiConsole.Ask<string>("Do you want to display the list of files? [blue](y/n):[/]");
-			if (answer == "y" || answer == "Y" || answer == "yes" || answer == "YES") DisplayEnumerationResults(values, count);
-			else AnsiConsole.WriteException(new ArgumentException($"Files not displayed, Invalid input: '{answer}'"));
+			DisplayEnumerationResults(values, count, path);
 			return;
 		}
 
