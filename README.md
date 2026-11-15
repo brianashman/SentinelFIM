@@ -19,11 +19,6 @@ Unlike traditional single-purpose monitoring tools, SentinelFIM is designed as a
 - Real-time filesystem monitoring
 - Multiple independent monitoring sessions
 
-#### Current Implementations
-
-- SHA-256 hashing provider
-- FileSystemWatcher monitoring provider
-
 ### Reporting
 
 - Structured monitoring output
@@ -73,6 +68,7 @@ The architecture is designed to support long-term growth while maintaining a cle
 ## Current Scope
 
 SentinelFIM currently focuses on scanning and generation baselines for files and directories
+> Polling monitoring engine in Progress
 
 ### Supported
 
@@ -83,8 +79,7 @@ SentinelFIM currently focuses on scanning and generation baselines for files and
 
 ### Planned
 
-
-- Real-time change detection
+- Real-time & Polling based change detection
 - Multiple independent monitoring sessions
 - Additional hashing providers
 - Additional monitoring providers
