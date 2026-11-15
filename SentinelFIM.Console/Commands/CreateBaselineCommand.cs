@@ -20,7 +20,7 @@ namespace SentinelFIM.Console.Commands
 			_logger = logger;
 			_fileProvider = fileProvider;
 		}
-		private void SaveBaseline(string path, string outputFile) => _baselineStore.SaveBaseline(path, outputFile);
+		private BaselineResults SaveBaseline(string path, string outputFile, bool isRecursive) => _baselineStore.SaveBaseline(path, outputFile, isRecursive);
 		private void DisplayEnumerationResults(IReadOnlyList<string> values, int count, string path)
 		{
 			var directoryCount = values
@@ -102,18 +102,26 @@ namespace SentinelFIM.Console.Commands
 			DisplayEnumerationResults(values, count, path);
 			return;
 		}
-
+		public override ValidationResult Validate(CommandContext context, CreateBaselineSettings settings)
+		{
+			if (string.IsNullOrWhiteSpace(settings.OutputFile) && !settings.Preview) 
+			{
+				var result = ValidationResult.Error("" +
+				"Output Path must be specified with -o or --output");
+				AnsiConsole.MarkupLine("[yellow]Use -h or --help for more options[/]");
+				return result;
+			}
+			else return ValidationResult.Success();
+		}
+		public void CreateBaseline(CreateBaselineSettings settings)
+		{
+			var results = SaveBaseline(settings.Path, settings.OutputFile, settings.IsRecursive);
+			if (results.FilesSaved == 0) AnsiConsole.MarkupLine("[yellow]No Files Saved[/]");
+		}
 		public override int Execute(CommandContext context, CreateBaselineSettings settings, CancellationToken cancellationToken)
 		{
-			if (settings.Preview)
-			{
-				PreviewBaseline(settings.Path);
-			}
-			else
-			{
-				//removed for incremental testing purposes, only preview functionality is being tested. Uncomment to enable baseline creation.
-				//SaveBaseline(settings.Path, settings.OutputFile);
-			}
+			if (settings.Preview) PreviewBaseline(settings.Path);
+			else CreateBaseline(settings);
 			return 0;
 		}
 	}

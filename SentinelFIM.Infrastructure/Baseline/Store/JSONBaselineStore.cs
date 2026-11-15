@@ -1,12 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using SentinelFIM.Core.Baseline;
-using SentinelFIM.Core.Files;
 using SentinelFIM.Core.Identifiers;
 using SentinelFIM.Core.Models;
 using SentinelFIM.Infrastructure.Baseline.Creator;
 using System.Diagnostics;
-using System.Runtime.InteropServices.Marshalling;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 
 namespace SentinelFIM.Infrastructure.Baseline.Store
@@ -48,7 +45,7 @@ namespace SentinelFIM.Infrastructure.Baseline.Store
 			return scanResults!;	
 		}
 
-		public BaselineResults SaveBaseline(string path, string outputPath)
+		public BaselineResults SaveBaseline(string path, string outputPath, bool isRecursive)
 		{
 			Stopwatch timer = new();
 			string createdOutputFile = Path.GetFullPath(outputPath);
@@ -60,12 +57,10 @@ namespace SentinelFIM.Infrastructure.Baseline.Store
 			List<ScanResult> baseline = new();
 			if (isDirectory)
 			{
-				_logger.LogInformation("Creating baseline for directory: {Path}", path);
-				baseline.AddRange(_baselineCreator.CreateDirectoryBaseline(path));
+				baseline.AddRange(_baselineCreator.CreateDirectoryBaseline(path, isRecursive));
 			}
 			else if (isFile)
 			{
-				_logger.LogInformation("Creating baseline for file: {Path}", path);
 				baseline.Add(_baselineCreator.CreateFileBaseline(path));
 			}
 			else

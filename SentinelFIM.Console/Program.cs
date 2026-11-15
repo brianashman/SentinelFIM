@@ -37,7 +37,7 @@ app.Configure(config =>
 	{
 		baseline.AddCommand<CreateBaselineCommand>("create")
 			.WithDescription("Creates a baseline of the specified path")
-			.WithExample("baseline create --Path", "C:\\path\\to\\scan",  "--output C:\\path\\to\\output.json");
+			.WithExample("baseline create --Path", "C:\\path\\to\\scan",  "--output C:\\path\\to\\output.json", "--recursive");
 	});
 });
 

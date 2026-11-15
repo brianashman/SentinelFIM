@@ -16,14 +16,16 @@ namespace SentinelFIM.Infrastructure.Baseline.Creator
 			_fileProvider = fileProvider;
 			_hashProvider = hashProvider;
 		}
-		public IEnumerable<ScanResult> CreateDirectoryBaseline(string directoryPath)
+		public IEnumerable<ScanResult> CreateDirectoryBaseline(string directoryPath, bool isRecursive)
 		{
+			_logger.LogInformation("Creating baseline for directory: {Path}, Recursive: {Recursive}", directoryPath, isRecursive);
+
 			DirectoryInfo info = new(directoryPath);
 			// Validate the directory path
 			if(!info.Exists) throw new DirectoryNotFoundException("Directory not found: " + directoryPath);
-
-			
-			IEnumerable<string> files = _fileProvider.EnumeratePaths(directoryPath, EnumerationSearchOption.AllDirectories);
+			IEnumerable<string> files = [];
+			if (isRecursive) files = _fileProvider.EnumeratePaths(directoryPath, EnumerationSearchOption.AllDirectories);
+			else files = _fileProvider.EnumeratePaths(directoryPath, EnumerationSearchOption.RootOnly);
 			foreach (var file in files)
 			{
 				yield return CreateFileBaseline(file);

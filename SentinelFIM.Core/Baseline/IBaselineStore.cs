@@ -9,6 +9,6 @@ namespace SentinelFIM.Core.Baseline
 	{
 		string Format { get; }
 		IEnumerable<ScanResult> LoadBaseline(string path);
-		BaselineResults SaveBaseline(string path, string outputPath);
+		BaselineResults SaveBaseline(string path, string outputPath, bool isRecursive);
 	}
 }

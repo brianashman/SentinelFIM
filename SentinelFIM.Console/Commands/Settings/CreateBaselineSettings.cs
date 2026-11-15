@@ -33,6 +33,11 @@ namespace SentinelFIM.Console.Commands.Settings
 		[CommandOption("-o|--output <outputFile>")]
 		[Description("The file to save the baseline to")]
 		public string OutputFile { get; init; }
+
+		[CommandOption("-r|--recursive")]
+		[Description("Determines whether files are scanned in current directory or recursively")]
+		[DefaultValue(false)]
+		public bool IsRecursive { get; init; }
 		
 		/// <summary>
 		/// Reminder to add factory logic
