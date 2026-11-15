@@ -16,7 +16,6 @@ namespace SentinelFIM.Infrastructure.Files
 
 		public IEnumerable<string> EnumeratePaths(string path, string searchOption)
 		{
-			string[] result;
 			try
 			{
 				if (!Directory.Exists(path))
@@ -26,20 +25,12 @@ namespace SentinelFIM.Infrastructure.Files
 				
 				_logger.LogInformation("Enumerating files in directory: {path} with search option: {searchOption}", path, searchOption);
 				// Use a switch expression to determine the search option
-				result = searchOption switch
+				return searchOption switch
 				{
-					EnumerationSearchOption.AllDirectories => Directory.GetFiles(path, "*", SearchOption.AllDirectories),
-					EnumerationSearchOption.RootOnly => Directory.GetFiles(path, "*", SearchOption.TopDirectoryOnly),
+					EnumerationSearchOption.AllDirectories => Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories),
+					EnumerationSearchOption.RootOnly => Directory.EnumerateFiles(path, "*", SearchOption.TopDirectoryOnly),
 					_ => throw new ArgumentOutOfRangeException(nameof(searchOption), searchOption, null),
 				};
-				if(result.Count() > 0)
-				{
-					_logger.LogInformation("Enumerated {count} files in directory: {path}", result.Length, path);
-				}
-				else
-				{
-					_logger.LogWarning("No files found in directory: {path}", path);
-				}
 			}
 
 			catch (UnauthorizedAccessException)
@@ -57,7 +48,6 @@ namespace SentinelFIM.Infrastructure.Files
 				_logger.LogError("An I/O error occurred while accessing the directory: {path}", path);
 				throw;
 			}
-			return result;
 		}
 		public Stream OpenRead(string path) => File.OpenRead(path);
 	}

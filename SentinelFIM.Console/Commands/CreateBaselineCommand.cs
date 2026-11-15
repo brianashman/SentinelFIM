@@ -37,14 +37,23 @@ namespace SentinelFIM.Console.Commands
 				.AddColumn(new TableColumn("Description").LeftAligned());
 
 			table.AddRow("Files discovered", count.ToString("N0"), "The total number of files found in the specified path.");
-			table.AddRow("Directories discovered", directoryCount.ToString("N0"), "The total number of directories found in the specified path.");
+			table.AddRow("Directories discovered", directoryCount.ToString("N0"), "The total number of directories included in enumeration.");
 			AnsiConsole.MarkupLine($"[bold yellow]Enumeration Results:[/]");
 			AnsiConsole.Write(table);
 
 			AnsiConsole.WriteLine();
-			AnsiConsole.MarkupLine($"[bold yellow]Directory Tree:[/]");
 			//Note to implement later
-			//var tree = new Tree($"[blue]{Markup.Escape(path)} [/]");
+
+			var directories = Directory.EnumerateDirectories(path, "*", SearchOption.AllDirectories);
+			if (directories == null) return;
+
+			AnsiConsole.MarkupLine($"[bold yellow]Directory Tree:[/]");
+			var tree = new Tree($"[blue]{Markup.Escape(path)} [/]");
+			foreach (var item in directories!)
+			{
+				var subDirectory = Path.GetFullPath(item);
+				tree.AddNode($"[blue]{Markup.Escape(subDirectory.ToString()!)}[/]");
+			}
 
 			AnsiConsole.Write(tree);
 
@@ -65,10 +74,10 @@ namespace SentinelFIM.Console.Commands
 				.Start("Enumerating files...", ctx =>
 				{
 					values = [.. _fileProvider.EnumeratePaths(path, EnumerationSearchOption.AllDirectories)];
-					Task.Delay(100).Wait(); // Add a small delay for testing purposes
+					//Task.Delay(100).Wait(); // Add a small delay for testing purposes
 					ctx.Status("Done");
 					// Add a small delay for testing purposes
-					Task.Delay(100).Wait();
+					//Task.Delay(100).Wait();
 
 					timer.Stop();
 					AnsiConsole.WriteLine();
