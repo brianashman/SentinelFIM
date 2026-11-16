@@ -113,7 +113,7 @@ AI was used as a learning tool for conceptual explanations, architecture discuss
 ## Design Decisions
 
 Detailed architectural decisions can be found in:
-docs/design-decisions.md
+`docs/design-decisions.md`
 
 ## License
 
