@@ -110,6 +110,11 @@ The architecture, application logic, and first-party source code for this projec
 
 AI was used as a learning tool for conceptual explanations, architecture discussions, debugging assistance, and documentation support.
 
+## Design Decisions
+
+Detailed architectural decisions can be found in:
+docs/design-decisions.md
+
 ## License
 
 MIT License

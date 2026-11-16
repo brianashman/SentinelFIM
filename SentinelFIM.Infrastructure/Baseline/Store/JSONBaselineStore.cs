@@ -10,7 +10,6 @@ namespace SentinelFIM.Infrastructure.Baseline.Store
 {
 	// Algorithm is autosupplied via DI container temporarily for baselinecreator.
 	// This class is responsible for saving and loading baseline data in JSON format.
-	// Note: Add a choice to choose a directory to save the file to if the baseline is created. (Baseline Saves to current directory only temporarily)
 	public class JsonBaselineStore : IBaselineStore
 	{
 		public string Format => OutputFormat.Json;

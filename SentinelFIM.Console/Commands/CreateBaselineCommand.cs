@@ -9,6 +9,7 @@ using System.Diagnostics;
 
 namespace SentinelFIM.Console.Commands
 {
+	//Reminder to fix preview command always enumerating recursively, even when the recursive option is not specified.
 	public class CreateBaselineCommand: Command<CreateBaselineSettings>
 	{
 		private readonly IBaselineStore _baselineStore;
