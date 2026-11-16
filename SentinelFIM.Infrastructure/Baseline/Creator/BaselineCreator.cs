@@ -44,6 +44,7 @@ namespace SentinelFIM.Infrastructure.Baseline.Creator
 				FileName = info.Name,
 				Path = path,
 				Algorithm = _hashProvider.Algorithm,
+				FileSize = info.Length,
 				Hash = _hashProvider.ComputeHash(stream)
 			};
 		}
