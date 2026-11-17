@@ -1,15 +1,16 @@
 ﻿using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
-using SentinelFIM.Console.Commands.Settings;
+using SentinelFIM.Console.Commands.BaselineCommands.Settings;
 using SentinelFIM.Core.Baseline;
 using SentinelFIM.Core.Models;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System.Diagnostics;
 
-namespace SentinelFIM.Console.Commands
+namespace SentinelFIM.Console.Commands.BaselineCommands
 {
 	//Reminder to fix preview command always enumerating recursively, even when the recursive option is not specified.
+	//Reminder to implement results display for baseline creation.
 	public class CreateBaselineCommand: Command<CreateBaselineSettings>
 	{
 		private readonly IBaselineStore _baselineStore;

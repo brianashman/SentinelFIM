@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
-namespace SentinelFIM.Console.Commands.Settings
+namespace SentinelFIM.Console.Commands.BaselineCommands.Settings
 {
 	public class CreateBaselineSettings: CommandSettings
 	{

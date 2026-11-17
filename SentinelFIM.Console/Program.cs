@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using SentinelFIM.Console.Commands;
+using SentinelFIM.Console.Commands.BaselineCommands;
 using SentinelFIM.Core.Baseline;
 using SentinelFIM.Core.Hashing;
 using SentinelFIM.Core.Models;
@@ -38,6 +38,12 @@ app.Configure(config =>
 		baseline.AddCommand<CreateBaselineCommand>("create")
 			.WithDescription("Creates a baseline of the specified path")
 			.WithExample("baseline create --Path", "C:\\path\\to\\scan",  "--output C:\\path\\to\\output.json", "--recursive");
+	});
+	config.AddBranch("monitor", monitor =>
+	{
+		monitor.AddCommand<MonitorBaselineCommand>("start")
+			.WithDescription("Starts monitoring the specified baseline file for changes")
+			.WithExample("monitor start --baseline", "C:\\path\\to\\baseline.json");
 	});
 });
 
