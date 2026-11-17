@@ -13,11 +13,10 @@ namespace SentinelFIM.Console.Commands.BaselineCommands.Settings
 		public string Baseline { get; init; }
 
 		//Reminder to change interval later
-		//Intentionally using string to avoid parsing issues with Spectre.Console.Cli
 		[CommandOption("-i|--interval <Interval>")]
 		[Description("The interval at which to check the baseline")]
-		[DefaultValue("15")]
-		public string Interval { get; init; }
+		[DefaultValue(15)]
+		public int Interval { get; init; }
 
 		[CommandOption("-o|--once")]
 		[Description("Only check the baseline once, instead of continuously")]

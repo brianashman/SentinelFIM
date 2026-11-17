@@ -35,7 +35,6 @@ var registrar = new SentinelFIM.Console.Spectre.TypeRegistrar(builder.Services);
 var app = new CommandApp(registrar);
 app.Configure(config =>
 {
-	config.UseStrictParsing();
 	config.CaseSensitivity(CaseSensitivity.None);
 	config.SetApplicationName("sentinelfim");
 	config.AddBranch("baseline", baseline =>

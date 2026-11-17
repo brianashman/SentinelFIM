@@ -37,15 +37,7 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 			bool helpShown = false;
 			var help = "[yellow]Use -h or --help for more options[/]";
 
-			
-
-			if (!int.TryParse(settings.Interval, out int interval))
-			{
-				if (!helpShown) AnsiConsole.MarkupLine(help);
-				helpShown = true;
-				return ValidationResult.Error("Interval must be a valid integer (Example: --interval 15)");
-			}
-			if (interval <= 0)
+			if (settings.Interval <= 0)
 			{
 				if(!helpShown) AnsiConsole.MarkupLine(help);
 				helpShown = true;
@@ -55,7 +47,7 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 		}
 		public override int Execute(CommandContext context, MonitorBaselineSettings settings, CancellationToken cancellationToken)
 		{	
-			if (settings.Once) CheckOnce(settings.Baseline, int.Parse(settings.Interval), settings.Once);
+			if (settings.Once) CheckOnce(settings.Baseline, settings.Interval, settings.Once);
 			//Reminder to implement continuous monitoring of baseline file changes.
 			return 0;
 		}
