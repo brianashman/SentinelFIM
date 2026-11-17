@@ -34,7 +34,7 @@ namespace SentinelFIM.Console.Commands.BaselineCommands.Settings
 		[Description("The file to save the baseline to")]
 		public string OutputFile { get; init; }
 
-		[CommandOption("-r|--recursive")]
+		[CommandOption("-r|--recursive|--recurse")]
 		[Description("Determines whether files are scanned in current directory or recursively")]
 		[DefaultValue(false)]
 		public bool IsRecursive { get; init; }
