@@ -83,8 +83,6 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 
 					timer.Stop();
 					AnsiConsole.WriteLine();
-
-
 				});
 			timer.Stop();
 			var count = values.Count;

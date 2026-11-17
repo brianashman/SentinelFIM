@@ -5,9 +5,11 @@ using SentinelFIM.Console.Commands.BaselineCommands;
 using SentinelFIM.Core.Baseline;
 using SentinelFIM.Core.Hashing;
 using SentinelFIM.Core.Models;
+using SentinelFIM.Core.Monitoring.Baseline;
 using SentinelFIM.Infrastructure.Baseline.Creator;
 using SentinelFIM.Infrastructure.Baseline.Store;
 using SentinelFIM.Infrastructure.Hashing;
+using SentinelFIM.Infrastructure.Monitoring.Baseline;
 using Spectre.Console.Cli;
 using System.Linq.Expressions;
 
@@ -22,6 +24,7 @@ builder.Logging.ClearProviders();
 builder.Services.AddSingleton<IHashProvider, SHA256HashProvider>();
 builder.Services.AddSingleton<IBaselineStore, JsonBaselineStore>();
 builder.Services.AddSingleton<BaselineCreator>();
+builder.Services.AddSingleton<IBaselineFileMonitor, PollingBaselineFileMonitor>();
 //File provider name conflicts with an existing IFileProvider and FileSystemProvider
 //Used the full namespace for the interface as a compensating control
 builder.Services.AddSingleton<SentinelFIM.Core.Files.IFileProvider, SentinelFIM.Infrastructure.Files.FileSystemProvider>();
@@ -40,12 +43,9 @@ app.Configure(config =>
 		baseline.AddCommand<CreateBaselineCommand>("create")
 			.WithDescription("Creates a baseline of the specified path")
 			.WithExample("baseline create --Path", "C:\\path\\to\\scan",  "--output C:\\path\\to\\output.json", "--recursive");
-	});
-	config.AddBranch("monitor", monitor =>
-	{
-		monitor.AddCommand<MonitorBaselineCommand>("start")
-			.WithDescription("Starts monitoring the specified baseline file for changes")
-			.WithExample("monitor start --baseline", "C:\\path\\to\\baseline.json");
+		baseline.AddCommand<MonitorBaselineCommand>("monitor")
+			.WithDescription("Monitors the specified baseline file for changes")
+			.WithExample("monitor", "C:\\path\\to\\baseline.json");
 	});
 });
 
