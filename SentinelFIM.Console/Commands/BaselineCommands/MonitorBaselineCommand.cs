@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using SentinelFIM.Console.Commands.BaselineCommands.Settings;
+using SentinelFIM.Core.Models.Monitoring;
 using SentinelFIM.Core.Monitoring.Baseline;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -20,10 +21,40 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 		{
 			_logger.LogInformation("Checking baseline file {BaselinePath} for changes", baselinePath);
 			var results = _baselineFileMonitor.Scan(baselinePath);
+
+			
 			foreach (var result in results)
 			{
-				AnsiConsole.MarkupLine($"[bold red]Alert:[/] {result.AlertType} - {result.Path}");
+				AnsiConsole.MarkupLine($"[bold red]Alert:[/] {result.AlertType}");
+				AnsiConsole.MarkupLine($"[bold yellow]Message:[/] {result.AlertMessage}");
+				AnsiConsole.MarkupLine($"[bold yellow]Path:[/] {result.Path}");
+				if (result.LastModified != null) AnsiConsole.MarkupLine($"[bold yellow]Last Modified:[/] {result.LastModified?.ToLocalTime().ToString()}");
+				else AnsiConsole.MarkupLine($"[bold yellow]Last Modified:[/] N/A");
+				if(result.AlertType is AlertType.FileSizeChanged && result.PreviousValue != null && result.CurrentValue != null)
+				{
+					AnsiConsole.MarkupLine($"[bold yellow]Previous Value:[/] {result.PreviousValue} bytes");
+					AnsiConsole.MarkupLine($"[bold yellow]Current Value:[/] {result.CurrentValue} bytes");
+				}
+				else
+				{
+					if(result.PreviousValue != null && result.CurrentValue != null)
+					{
+						AnsiConsole.MarkupLine($"[bold yellow]Previous Value:[/] {result.PreviousValue}");
+						AnsiConsole.MarkupLine($"[bold yellow]Current Value:[/] {result.CurrentValue}");
+					}
+					else
+					{
+						AnsiConsole.MarkupLine($"[bold yellow] Previous Value:[/] N/A");
+						AnsiConsole.MarkupLine($"[bold yellow] Current Value:[/] N/A");
+					}
+				}
+				AnsiConsole.MarkupLine($"[bold yellow]Timestamp:[/] {result.Timestamp.ToLocalTime().ToString()}");
+
+				var rule = new Rule($"[bold red]End of Alert[/]").RuleStyle("red").DottedBorder();
+				AnsiConsole.Write(rule);
+				AnsiConsole.WriteLine();
 			}
+
 			if (results == null)
 			{
 				_logger.LogInformation("No changes detected in baseline file {BaselinePath}", baselinePath);

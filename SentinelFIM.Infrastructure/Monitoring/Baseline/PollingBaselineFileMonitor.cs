@@ -17,10 +17,15 @@ namespace SentinelFIM.Infrastructure.Monitoring.Baseline
 	/// Files are not enumerated individually then checked against the baseline.
 	/// Instead, paths are loaded from the baseline and evaluated by the monitor.
 	/// </summary>
+	
+	// TODO:
+	// Add monitoring exporter factory.
+	// Exporters selected by self-identifying format name.
+	// Monitor optionally exports alerts as they are generated.
 	public class PollingBaselineFileMonitor : IBaselineFileMonitor
 	{
 		private readonly ILogger<PollingBaselineFileMonitor> _logger;
-		private Dictionary<string, ScanResult> _inMemoryBaseline;
+		private readonly Dictionary<string, ScanResult> _inMemoryBaseline;
 		private readonly IHashProvider _hashProvider;
 		private readonly IBaselineStore _baselineStore;
 		public PollingBaselineFileMonitor(ILogger<PollingBaselineFileMonitor> logger, IHashProvider hashProvider, IBaselineStore baselineStore)
@@ -59,45 +64,74 @@ namespace SentinelFIM.Infrastructure.Monitoring.Baseline
 			FileInfo file = new(path);
 			if (file.Exists)
 			{
-				using var stream = file.OpenRead();
+				FileStream stream = null!;
+				try
+				{
+					stream = file.OpenRead();
+				}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex, "Error opening file: {Path}", path);
+					yield break;
+				}
 				var baseline = _inMemoryBaseline[path];
-
-				var hash = _hashProvider.ComputeHash(stream);
+				var fileHash = string.Empty;
+				using (stream)
+				{
+					fileHash = _hashProvider.ComputeHash(stream);
+				}
 				var baselineHash = baseline.Hash;
 
 				var fileSize = file.Length;
 				var baselineFileSize = baseline.FileSize;
 
-				if (hash != baselineHash)
+				var lastModified = file.LastWriteTimeUtc;
+
+				var fileName = file.Name;
+
+				if (fileHash != baselineHash)
 				{
+					_logger.LogWarning("Hash changed for file: {Path}. Baseline hash: {BaselineHash}, Current hash: {CurrentHash}", path, baselineHash, fileHash);
 					yield return new MonitoringAlert
 					(
 						path,
 						AlertType.HashChanged,
-						$"Hash changed for file: {path}.",
-						DateTime.UtcNow
+						$"Hash changed for file: {fileName}.",
+						DateTime.UtcNow,
+						lastModified,
+						baselineHash,
+						fileHash
 					);
 				}
 				if (fileSize != baselineFileSize)
 				{
+					_logger.LogWarning("File size changed for file: {Path}. Baseline size: {BaselineSize}, Current size: {CurrentSize}", path, baselineFileSize, fileSize);
 					yield return new MonitoringAlert
 					(
 						path,
 						AlertType.FileSizeChanged,
-						$"File size changed for file: {path}.",
-						DateTime.UtcNow
+						$"File size changed for file: {fileName}.",
+						DateTime.UtcNow,
+						lastModified,
+						baselineFileSize.ToString(),
+						fileSize.ToString()
 					);
 				}
 			}
 			else
 			{
+				//Reminder to add more detailed information for alert message
 				_logger.LogWarning("File not found: {Path}. It may have been deleted or moved.", path);
 				yield return new MonitoringAlert
 				(
 					path,
 					AlertType.Deleted,
+					//Cannot use file.Name because file does not exist, so we cannot get the name from the FileInfo object.
 					$"File not found: {path}. It may have been deleted or moved.",
-					DateTime.UtcNow
+					DateTime.UtcNow,
+					null,
+					null,
+					null
 				);
 			}
 		}
@@ -105,11 +139,6 @@ namespace SentinelFIM.Infrastructure.Monitoring.Baseline
 		{
 			LoadBaseline(path);
 			var paths = GetPaths();
-			if(!paths.Any())
-			{
-				_logger.LogWarning("No paths found in baseline. Please ensure the baseline is not empty.");
-				throw new InvalidOperationException("No paths found in baseline. Please ensure the baseline is not empty.");
-			}
 			_logger.LogInformation("Scanning files against baseline from file: {Path}", path);
 			//No logs for individual files to prevent flooding the log with entries.
 			foreach (var item in paths)
