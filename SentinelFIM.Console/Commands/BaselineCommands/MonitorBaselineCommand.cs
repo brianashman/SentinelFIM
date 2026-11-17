@@ -48,6 +48,7 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 		public override int Execute(CommandContext context, MonitorBaselineSettings settings, CancellationToken cancellationToken)
 		{	
 			if (settings.Once) CheckOnce(settings.Baseline, settings.Interval, settings.Once);
+			else AnsiConsole.MarkupLine("[yellow]Continuous monitoring is not yet implemented. Please use the --once option for now.[/]");
 			//Reminder to implement continuous monitoring of baseline file changes.
 			return 0;
 		}

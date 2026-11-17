@@ -36,6 +36,7 @@ var app = new CommandApp(registrar);
 app.Configure(config =>
 {
 	config.CaseSensitivity(CaseSensitivity.None);
+	config.SetApplicationVersion("0.1.0");
 	config.SetApplicationName("sentinelfim");
 	config.AddBranch("baseline", baseline =>
 	{
