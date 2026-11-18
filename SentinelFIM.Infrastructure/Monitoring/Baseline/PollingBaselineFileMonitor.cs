@@ -5,6 +5,7 @@ using SentinelFIM.Core.Hashing;
 using SentinelFIM.Core.Models;
 using SentinelFIM.Core.Models.Monitoring;
 using SentinelFIM.Core.Monitoring.Baseline;
+using System.Diagnostics;
 
 namespace SentinelFIM.Infrastructure.Monitoring.Baseline
 {
@@ -22,12 +23,16 @@ namespace SentinelFIM.Infrastructure.Monitoring.Baseline
 	// Add monitoring exporter factory.
 	// Exporters selected by self-identifying format name.
 	// Monitor optionally exports alerts as they are generated.
+	//Reminder to expose a property to set interval at runtime for GUI specifically.
 	public class PollingBaselineFileMonitor : IBaselineFileMonitor
 	{
 		private readonly ILogger<PollingBaselineFileMonitor> _logger;
 		private readonly Dictionary<string, ScanResult> _inMemoryBaseline;
 		private readonly IHashProvider _hashProvider;
 		private readonly IBaselineStore _baselineStore;
+		private string? baselinePath = null;
+		public event EventHandler<MonitoringStatus>? StatusChanged;
+
 		public PollingBaselineFileMonitor(ILogger<PollingBaselineFileMonitor> logger, IHashProvider hashProvider, IBaselineStore baselineStore)
 		{
 			_logger = logger;
@@ -137,7 +142,13 @@ namespace SentinelFIM.Infrastructure.Monitoring.Baseline
 		}
 		public IEnumerable<MonitoringAlert> Scan(string path)
 		{
-			LoadBaseline(path);
+			//Load the Baseline if it has not been loaded yet.
+			if (baselinePath != path)
+			{
+				baselinePath = path;
+				LoadBaseline(path);
+			}
+
 			var paths = GetPaths();
 			_logger.LogInformation("Scanning files against baseline from file: {Path}", path);
 			//No logs for individual files to prevent flooding the log with entries.
@@ -149,18 +160,53 @@ namespace SentinelFIM.Infrastructure.Monitoring.Baseline
 				}
 			}
 		}
-		//Reminder to change Start to Event driven polling monitor so alerts are generated in real time and sent to presentation.
-		//Reminder to increase the intervalSeconds to a more reasonable value for release.
-		public void Start(string path, CancellationToken cancellationToken, int intervalSeconds = 5)
+		public IEnumerable<MonitoringAlert> Monitor(string path, int intervalSeconds, CancellationToken cancellationToken)
 		{
-			//LoadBaseline(path);
-			//note to add "continuous monitoring" phrase to the log message during Start() implementation.
-			throw new NotImplementedException();
-		}
+			StatusChanged?.Invoke(this, new MonitoringStatus(
+					MonitoringStatusType.Started,
+					$"Continuous monitoring in progress for baseline file: {path}",
+					DateTime.UtcNow
+				));
+			_logger.LogInformation("Continuous monitoring started for baseline file: {Path}", path);
+			var monitoringTimer = Stopwatch.StartNew();
+			try
+			{
+				while (!cancellationToken.IsCancellationRequested)
+				{
+					var intervalTimer = Stopwatch.StartNew();
+					var alerts = Scan(path);
 
-		public void Stop()
-		{
-			throw new NotImplementedException();
+					foreach (var alert in alerts)
+					{
+						yield return alert;
+					}
+					intervalTimer.Stop();
+					var timeRemaining = TimeSpan.FromSeconds(intervalSeconds) - intervalTimer.Elapsed;
+					if (timeRemaining < TimeSpan.Zero)
+					{
+						StatusChanged?.Invoke(this, new MonitoringStatus(
+							MonitoringStatusType.IntervalExceeded, 
+							$"Scan completed in {intervalTimer.Elapsed.TotalSeconds} seconds, which is longer than the specified interval of {intervalSeconds} seconds. Consider increasing the interval.", 
+							DateTime.UtcNow));
+						_logger.LogWarning("Scan completed in {ElapsedSeconds} seconds, which is longer than the specified interval of {IntervalSeconds} seconds.", intervalTimer.Elapsed.TotalSeconds, intervalSeconds);
+						timeRemaining = TimeSpan.Zero;
+					}
+
+					if (cancellationToken.WaitHandle.WaitOne(timeRemaining))
+					{
+						yield break; //Stop monitoring if cancellation is requested
+					}
+				}
+			}
+			finally
+			{
+				monitoringTimer.Stop();
+				StatusChanged?.Invoke(this, new MonitoringStatus(
+					MonitoringStatusType.Stopped,
+					$"Continuous monitoring stopped - Cancellation requested.\nTotal time: {monitoringTimer.Elapsed.TotalSeconds} seconds",
+					DateTime.UtcNow));
+				_logger.LogInformation("Continuous monitoring stopped for baseline file: {Path}", path);
+			}
 		}
 	}
 }

@@ -11,8 +11,8 @@ namespace SentinelFIM.Core.Monitoring.Baseline
 	// Monitor optionally exports alerts as they are generated.
 	public interface IBaselineFileMonitor
 	{
+		event EventHandler<MonitoringStatus> StatusChanged;
 		IEnumerable<MonitoringAlert> Scan(string path); //Single Check
-		void Start(string path, CancellationToken cancellationToken, int intervalSeconds = 5); // Continuous Check
-		void Stop();
+		IEnumerable<MonitoringAlert> Monitor(string path, int intervalSeconds, CancellationToken cancellationToken); // Continuous Check
 	}
 }

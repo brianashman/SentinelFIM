@@ -67,8 +67,8 @@ The architecture is designed to support long-term growth while maintaining a cle
 
 ## Current Scope
 
-SentinelFIM currently focuses on scanning and generation baselines for files and directories
-> Polling monitoring engine in Progress
+SentinelFIM currently focuses on scanning, monitoring, and generating baselines for files and directories
+> Polling Engine Currently Undergoing Incremental Testing
 
 ### Supported
 
@@ -76,10 +76,11 @@ SentinelFIM currently focuses on scanning and generation baselines for files and
 - Integrity monitoring
 - Folder & File Based baseline generation
 - Recursive directory scanning
+- Polling based change detection
 
 ### Planned
 
-- Real-time & Polling based change detection
+- Real-time change detection
 - Multiple independent monitoring sessions
 - Additional hashing providers
 - Additional monitoring providers
