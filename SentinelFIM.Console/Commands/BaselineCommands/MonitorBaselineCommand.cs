@@ -11,13 +11,14 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 	{
 		private readonly IBaselineFileMonitor _baselineFileMonitor;
 		private readonly ILogger<MonitorBaselineCommand> _logger;
-		public MonitorBaselineCommand(IBaselineFileMonitor baselineFileMonitor, ILogger<MonitorBaselineCommand> logger)
+		public MonitorBaselineCommand(IBaselineFileMonitor baselineFileMonitor, 
+			ILogger<MonitorBaselineCommand> logger)
 		{
 			_baselineFileMonitor = baselineFileMonitor;
 			_logger = logger;
 		}
 
-		public void CheckOnce(string baselinePath, int interval, bool once)
+		private void CheckOnce(string baselinePath, int interval, bool once)
 		{
 			_logger.LogInformation("Checking baseline file {BaselinePath} for changes", baselinePath);
 			var results = _baselineFileMonitor.Scan(baselinePath);
@@ -62,6 +63,43 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 				return;
 			}
 		}
+		//Reminder to implement a way to change the monitoring implementation to prevent polling only.
+		private void CheckContinuously(string baselinePath, int interval, bool once, CancellationToken cancellationToken)
+		{
+			var baselineIterator = _baselineFileMonitor.Monitor(baselinePath, interval, cancellationToken);
+
+			AnsiConsole.MarkupLine("[purple]Note: Only polling approach is currently implemented[/]");
+
+			AnsiConsole.WriteLine();
+
+			AnsiConsole.MarkupLine($"[yellow]Monitoring baseline file {baselinePath} using interval: {interval} seconds.[/]");
+			
+			AnsiConsole.WriteLine();
+			var panel = new Panel("[yellow]Press [bold red]Ctrl+C[/] to stop monitoring[/]").BorderColor(Color.Red);
+			AnsiConsole.Write(panel);
+			foreach (var alert in baselineIterator)
+			{
+				_baselineFileMonitor.StatusChanged += (sender, status) =>
+				{
+					if (status.Status == MonitoringStatusType.Started)
+					{
+						AnsiConsole.MarkupLine($"[green]Monitoring started at {status.TimeStamp.ToLocalTime()}[/]");
+					}
+					else if (status.Status == MonitoringStatusType.Stopped)
+					{
+						AnsiConsole.MarkupLine($"[red]Monitoring stopped at {status.TimeStamp.ToLocalTime()}[/]");
+					}
+				};
+				var rule = new Rule($"[bold red]Alert Detected[/]").RuleStyle("red").DottedBorder();
+				AnsiConsole.Write(rule);
+				AnsiConsole.MarkupLine(alert.AlertMessage);
+				AnsiConsole.WriteLine();
+			}
+
+			//_logger.LogInformation("Continuous monitoring of baseline file {BaselinePath} is not yet implemented", baselinePath);
+			AnsiConsole.MarkupLine("[yellow]Continuous monitoring is not fully implemented. Please use the --once option for now.[/]");
+			return;
+		}
 		public override ValidationResult Validate(CommandContext context, MonitorBaselineSettings settings)
 		{
 			//Added to prevent showing help multiple times
@@ -76,10 +114,12 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 			}
 			return ValidationResult.Success();
 		}
+
 		public override int Execute(CommandContext context, MonitorBaselineSettings settings, CancellationToken cancellationToken)
-		{	
+		{
 			if (settings.Once) CheckOnce(settings.Baseline, settings.Interval, settings.Once);
-			else AnsiConsole.MarkupLine("[yellow]Continuous monitoring is not yet implemented. Please use the --once option for now.[/]");
+			//else AnsiConsole.MarkupLine("[yellow]Continuous monitoring is not yet implemented. Please use the --once option for now.[/]");
+			else CheckContinuously(settings.Baseline, settings.Interval, settings.Once, cancellationToken);
 			//Reminder to implement continuous monitoring of baseline file changes.
 			return 0;
 		}
