@@ -145,7 +145,7 @@ namespace SentinelFIM.Infrastructure.Monitoring.Baseline
 				);
 			}
 		}
-		public IEnumerable<MonitoringAlert> Scan(string path)
+		public IEnumerable<MonitoringAlert> Scan(string path, CancellationToken cancellationToken)
 		{
 			//Load the Baseline if it has not been loaded yet.
 			if (baselinePath != path)
@@ -159,6 +159,7 @@ namespace SentinelFIM.Infrastructure.Monitoring.Baseline
 			//No logs for individual files to prevent flooding the log with entries.
 			foreach (var item in paths)
 			{
+				cancellationToken.ThrowIfCancellationRequested();
 				foreach (var alert in Compare(item))
 				{
 					yield return alert;
@@ -179,7 +180,7 @@ namespace SentinelFIM.Infrastructure.Monitoring.Baseline
 				while (!cancellationToken.IsCancellationRequested)
 				{
 					var intervalTimer = Stopwatch.StartNew();
-					var alerts = Scan(path);
+					var alerts = Scan(path, cancellationToken);
 
 					foreach (var alert in alerts)
 					{

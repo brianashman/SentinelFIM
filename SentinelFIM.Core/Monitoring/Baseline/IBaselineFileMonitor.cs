@@ -12,7 +12,7 @@ namespace SentinelFIM.Core.Monitoring.Baseline
 	public interface IBaselineFileMonitor
 	{
 		event EventHandler<MonitoringStatus> StatusChanged;
-		IEnumerable<MonitoringAlert> Scan(string path); //Single Check
+		IEnumerable<MonitoringAlert> Scan(string path, CancellationToken cancellationToken); //Single Check
 		IEnumerable<MonitoringAlert> Monitor(string path, int intervalSeconds, CancellationToken cancellationToken); // Continuous Check
 	}
 }

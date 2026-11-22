@@ -21,7 +21,7 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 		private void CheckOnce(string baselinePath, int interval, bool once)
 		{
 			_logger.LogInformation("Checking baseline file {BaselinePath} for changes", baselinePath);
-			var results = _baselineFileMonitor.Scan(baselinePath);
+			var results = _baselineFileMonitor.Scan(baselinePath, CancellationToken.None);
 
 			
 			foreach (var result in results)
@@ -77,8 +77,10 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 			AnsiConsole.WriteLine();
 			var panel = new Panel("[yellow]Press [bold red]Ctrl+C[/] to stop monitoring[/]").BorderColor(Color.Red);
 			AnsiConsole.Write(panel);
-			
-			
+
+			var table = new Table();
+			table.AddColumn("Alert Type");
+			table.AddColumn("Alert Message");
 
 			_baselineFileMonitor.StatusChanged += (sender, status) =>
 			{
@@ -100,12 +102,14 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 					AnsiConsole.MarkupLine($"[yellow]{status.Message}[/]");
 				}
 			};
+			var alertMessages = new HashSet<MonitoringAlert>();
 			foreach (var alert in baselineIterator)
 			{
-				
+				var alertDisplayed = alertMessages.Add(alert);
 				var rule = new Rule($"[bold red]Alert Detected[/]").RuleStyle("red").DottedBorder();
 				AnsiConsole.Write(rule);
-				AnsiConsole.MarkupLine(alert.AlertMessage);
+				if (!alertDisplayed) AnsiConsole.MarkupLine($"[red]{alertMessages.Last().AlertMessage}[/]");
+				else AnsiConsole.MarkupLine($"[green]No new alerts detected.[/]");
 				AnsiConsole.WriteLine();
 			}
 

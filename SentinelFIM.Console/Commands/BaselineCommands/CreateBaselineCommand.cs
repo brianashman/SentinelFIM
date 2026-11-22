@@ -23,8 +23,6 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 			_logger = logger;
 			_fileProvider = fileProvider;
 		}
-		private BaselineResults SaveBaseline(string path, string outputFile, bool isRecursive, CancellationToken cancellationToken) => 
-			_baselineStore.SaveBaseline(path, outputFile, isRecursive, cancellationToken);
 		private void DisplayEnumerationResults(IReadOnlyList<string> values, int count, string path)
 		{
 			var directoryCount = values
