@@ -2,5 +2,5 @@
   <Project Path="SentinelFIM.Console/SentinelFIM.Console.csproj" Id="c6883d95-761a-46c9-b29b-9a2cf8afd418" />
   <Project Path="SentinelFIM.Core/SentinelFIM.Core.csproj" />
   <Project Path="SentinelFIM.Infrastructure/SentinelFIM.Infrastructure.csproj" Id="47c79396-ef78-4a87-b112-fe3561505fcd" />
-  <Project Path="SentinelFIM.Tests/SentinelFIM.Tests.csproj" Id="ec5dc114-4ff3-4f21-973f-80792cabfa77" />
+  <Project Path="SentinelFIM.Tests/SentinelFIM.Tests.csproj" Id="d1ccd9f3-a2a0-4bdf-8843-0c04633c568e" />
 </Solution>
