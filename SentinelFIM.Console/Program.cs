@@ -31,6 +31,12 @@ builder.Services.AddSingleton<SentinelFIM.Core.Files.IFileProvider, SentinelFIM.
 #endregion
 
 var registrar = new SentinelFIM.Console.Spectre.TypeRegistrar(builder.Services);
+var cts = new CancellationTokenSource();
+Console.CancelKeyPress += (_, e) =>
+{
+	e.Cancel = true; 
+	cts.Cancel();
+};
 
 var app = new CommandApp(registrar);
 app.Configure(config =>
@@ -38,6 +44,7 @@ app.Configure(config =>
 	config.CaseSensitivity(CaseSensitivity.None);
 	config.SetApplicationVersion("0.1.0");
 	config.SetApplicationName("sentinelfim");
+
 	config.AddBranch("baseline", baseline =>
 	{
 		baseline.AddCommand<CreateBaselineCommand>("create")
@@ -49,5 +56,5 @@ app.Configure(config =>
 	});
 });
 
-return app.Run(args);
+return app.Run(args, cts.Token);
 

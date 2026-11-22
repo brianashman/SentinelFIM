@@ -14,7 +14,7 @@ namespace SentinelFIM.Console.Commands.BaselineCommands.Settings
 		[CommandArgument(0, "[Path]")]
 		[Description("The path to create the baseline for")]
 		[DefaultValue(DefaultPath)]
-		public string Path { get; init; }
+		public required string Path { get; init; }
 
 
 		[CommandOption("-p|--preview")]
@@ -32,7 +32,7 @@ namespace SentinelFIM.Console.Commands.BaselineCommands.Settings
 
 		[CommandOption("-o|--output <outputFile>")]
 		[Description("The file to save the baseline to")]
-		public string OutputFile { get; init; }
+		public required string OutputFile { get; init; }
 
 		[CommandOption("-r|--recursive|--recurse")]
 		[Description("Determines whether files are scanned in current directory or recursively")]

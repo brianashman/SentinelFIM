@@ -18,12 +18,17 @@ namespace SentinelFIM.Infrastructure.Monitoring.Baseline
 	/// Files are not enumerated individually then checked against the baseline.
 	/// Instead, paths are loaded from the baseline and evaluated by the monitor.
 	/// </summary>
-	
+
 	// TODO:
 	// Add monitoring exporter factory.
 	// Exporters selected by self-identifying format name.
 	// Monitor optionally exports alerts as they are generated.
-	//Reminder to expose a property to set interval at runtime for GUI specifically.
+	// Reminder to expose a property to set interval at runtime for GUI specifically.
+
+	// TODO:
+	// Continuous polling generates duplicate alerts for files that remain
+	// in the same state across scans. When file logging is implemented,
+	// track alert state transitions and only log detected/resolved events.
 	public class PollingBaselineFileMonitor : IBaselineFileMonitor
 	{
 		private readonly ILogger<PollingBaselineFileMonitor> _logger;
@@ -96,7 +101,7 @@ namespace SentinelFIM.Infrastructure.Monitoring.Baseline
 
 				if (fileHash != baselineHash)
 				{
-					_logger.LogWarning("Hash changed for file: {Path}. Baseline hash: {BaselineHash}, Current hash: {CurrentHash}", path, baselineHash, fileHash);
+					//_logger.LogWarning("Hash changed for file: {Path}. Baseline hash: {BaselineHash}, Current hash: {CurrentHash}", path, baselineHash, fileHash);
 					yield return new MonitoringAlert
 					(
 						path,
@@ -110,7 +115,7 @@ namespace SentinelFIM.Infrastructure.Monitoring.Baseline
 				}
 				if (fileSize != baselineFileSize)
 				{
-					_logger.LogWarning("File size changed for file: {Path}. Baseline size: {BaselineSize}, Current size: {CurrentSize}", path, baselineFileSize, fileSize);
+					//_logger.LogWarning("File size changed for file: {Path}. Baseline size: {BaselineSize}, Current size: {CurrentSize}", path, baselineFileSize, fileSize);
 					yield return new MonitoringAlert
 					(
 						path,
@@ -126,7 +131,7 @@ namespace SentinelFIM.Infrastructure.Monitoring.Baseline
 			else
 			{
 				//Reminder to add more detailed information for alert message
-				_logger.LogWarning("File not found: {Path}. It may have been deleted or moved.", path);
+				//_logger.LogWarning("File not found: {Path}. It may have been deleted or moved.", path);
 				yield return new MonitoringAlert
 				(
 					path,

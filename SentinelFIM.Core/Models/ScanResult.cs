@@ -2,10 +2,10 @@
 	{
 		public class ScanResult
 		{
-			public string FileName { get; set; }
-			public string Path { get; set; }
-			public string Hash { get; set; }
-			public string Algorithm { get; set; }
+			public required string FileName { get; set; }
+			public required string Path { get; set; }
+			public required string Hash { get; set; }
+			public required string Algorithm { get; set; }
 			public long FileSize { get; set; }
 			public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
 			//for reference later

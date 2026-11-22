@@ -77,27 +77,38 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 			AnsiConsole.WriteLine();
 			var panel = new Panel("[yellow]Press [bold red]Ctrl+C[/] to stop monitoring[/]").BorderColor(Color.Red);
 			AnsiConsole.Write(panel);
+			
+			
+
+			_baselineFileMonitor.StatusChanged += (sender, status) =>
+			{
+				if (status.Status == MonitoringStatusType.Started)
+				{
+					AnsiConsole.MarkupLine($"[green]Monitoring started at {status.TimeStamp.ToLocalTime()}[/]");
+				}
+				else if (status.Status == MonitoringStatusType.Stopped)
+				{
+					AnsiConsole.MarkupLine($"[red]Monitoring stopped at {status.TimeStamp.ToLocalTime()}[/]");
+				}
+				else if (status.Status == MonitoringStatusType.Error)
+				{
+					AnsiConsole.MarkupLine($"[red]Monitoring error at {status.TimeStamp.ToLocalTime()}[/]");
+				}
+				else if (status.Status == MonitoringStatusType.IntervalExceeded)
+				{
+					AnsiConsole.MarkupLine($"[yellow]Monitoring interval exceeded at {status.TimeStamp.ToLocalTime()}[/]");
+					AnsiConsole.MarkupLine($"[yellow]{status.Message}[/]");
+				}
+			};
 			foreach (var alert in baselineIterator)
 			{
-				_baselineFileMonitor.StatusChanged += (sender, status) =>
-				{
-					if (status.Status == MonitoringStatusType.Started)
-					{
-						AnsiConsole.MarkupLine($"[green]Monitoring started at {status.TimeStamp.ToLocalTime()}[/]");
-					}
-					else if (status.Status == MonitoringStatusType.Stopped)
-					{
-						AnsiConsole.MarkupLine($"[red]Monitoring stopped at {status.TimeStamp.ToLocalTime()}[/]");
-					}
-				};
+				
 				var rule = new Rule($"[bold red]Alert Detected[/]").RuleStyle("red").DottedBorder();
 				AnsiConsole.Write(rule);
 				AnsiConsole.MarkupLine(alert.AlertMessage);
 				AnsiConsole.WriteLine();
 			}
 
-			//_logger.LogInformation("Continuous monitoring of baseline file {BaselinePath} is not yet implemented", baselinePath);
-			AnsiConsole.MarkupLine("[yellow]Continuous monitoring is not fully implemented. Please use the --once option for now.[/]");
 			return;
 		}
 		public override ValidationResult Validate(CommandContext context, MonitorBaselineSettings settings)
@@ -118,9 +129,7 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 		public override int Execute(CommandContext context, MonitorBaselineSettings settings, CancellationToken cancellationToken)
 		{
 			if (settings.Once) CheckOnce(settings.Baseline, settings.Interval, settings.Once);
-			//else AnsiConsole.MarkupLine("[yellow]Continuous monitoring is not yet implemented. Please use the --once option for now.[/]");
 			else CheckContinuously(settings.Baseline, settings.Interval, settings.Once, cancellationToken);
-			//Reminder to implement continuous monitoring of baseline file changes.
 			return 0;
 		}
 	}

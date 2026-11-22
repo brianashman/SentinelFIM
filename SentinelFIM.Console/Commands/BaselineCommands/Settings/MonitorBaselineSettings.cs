@@ -10,7 +10,7 @@ namespace SentinelFIM.Console.Commands.BaselineCommands.Settings
 	{
 		[CommandArgument(0, "<Path>")]
 		[Description("The path to the baseline file to monitor")]
-		public string Baseline { get; init; }
+		public required string Baseline { get; init; }
 
 		//Reminder to change interval later
 		[CommandOption("-i|--interval <Interval>")]
