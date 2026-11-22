@@ -13,6 +13,8 @@ namespace SentinelFIM.Core.Monitoring.Baseline
 	{
 		event EventHandler<MonitoringStatus> StatusChanged;
 		IEnumerable<MonitoringAlert> Scan(string path, CancellationToken cancellationToken); //Single Check
-		IEnumerable<MonitoringAlert> Monitor(string path, int intervalSeconds, CancellationToken cancellationToken); // Continuous Check
+		//intervalSeconds is used by polling-based monitors and ignored by
+		//implementations that do not require a polling interval.
+		IEnumerable<MonitoringAlert> Monitor(string path, int? intervalSeconds, CancellationToken cancellationToken); // Continuous Check
 	}
 }

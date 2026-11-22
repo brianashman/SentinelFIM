@@ -166,7 +166,7 @@ namespace SentinelFIM.Infrastructure.Monitoring.Baseline
 				}
 			}
 		}
-		public IEnumerable<MonitoringAlert> Monitor(string path, int intervalSeconds, CancellationToken cancellationToken)
+		public IEnumerable<MonitoringAlert> Monitor(string path, int? intervalSeconds, CancellationToken cancellationToken)
 		{
 			StatusChanged?.Invoke(this, new MonitoringStatus(
 					MonitoringStatusType.Started,
@@ -187,7 +187,7 @@ namespace SentinelFIM.Infrastructure.Monitoring.Baseline
 						yield return alert;
 					}
 					intervalTimer.Stop();
-					var timeRemaining = TimeSpan.FromSeconds(intervalSeconds) - intervalTimer.Elapsed;
+					var timeRemaining = TimeSpan.FromSeconds(intervalSeconds ?? 0) - intervalTimer.Elapsed;
 					if (timeRemaining < TimeSpan.Zero)
 					{
 						StatusChanged?.Invoke(this, new MonitoringStatus(

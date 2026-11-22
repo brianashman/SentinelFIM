@@ -11,6 +11,10 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 	{
 		private readonly IBaselineFileMonitor _baselineFileMonitor;
 		private readonly ILogger<MonitorBaselineCommand> _logger;
+
+		// Starts at 9 so the first interval warning is shown immediately.
+		// Afterwards, the warning is only shown every 10 occurrences.
+		private int counter = 9;
 		public MonitorBaselineCommand(IBaselineFileMonitor baselineFileMonitor, 
 			ILogger<MonitorBaselineCommand> logger)
 		{
@@ -63,8 +67,35 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 				return;
 			}
 		}
+		private void OnStatusChanged(object? sender, MonitoringStatus status)
+		{
+
+			if (status.Status == MonitoringStatusType.Started)
+			{
+				AnsiConsole.MarkupLine($"[green]Monitoring started at {status.TimeStamp.ToLocalTime()}[/]");
+			}
+			else if (status.Status == MonitoringStatusType.Stopped)
+			{
+				AnsiConsole.MarkupLine($"[red]Monitoring stopped at {status.TimeStamp.ToLocalTime()}[/]");
+			}
+			else if (status.Status == MonitoringStatusType.Error)
+			{
+				AnsiConsole.MarkupLine($"[red]Monitoring error at {status.TimeStamp.ToLocalTime()}[/]");
+			}
+			else if (status.Status == MonitoringStatusType.IntervalExceeded)
+			{	
+				counter+=1;
+				if (counter == 10)
+				{
+					AnsiConsole.MarkupLine($"[yellow]Monitoring interval exceeded at {status.TimeStamp.ToLocalTime()}[/]");
+					AnsiConsole.MarkupLine($"[yellow]{status.Message}[/]");
+					counter = 0;
+				}
+				
+			}
+		}
 		//Reminder to implement a way to change the monitoring implementation to prevent polling only.
-		private void CheckContinuously(string baselinePath, int interval, bool once, CancellationToken cancellationToken)
+		private void CheckContinuously(string baselinePath, int? interval, bool once, CancellationToken cancellationToken)
 		{
 			var baselineIterator = _baselineFileMonitor.Monitor(baselinePath, interval, cancellationToken);
 
@@ -78,41 +109,29 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 			var panel = new Panel("[yellow]Press [bold red]Ctrl+C[/] to stop monitoring[/]").BorderColor(Color.Red);
 			AnsiConsole.Write(panel);
 
-			var table = new Table();
-			table.AddColumn("Alert Type");
-			table.AddColumn("Alert Message");
 
-			_baselineFileMonitor.StatusChanged += (sender, status) =>
+			AnsiConsole.WriteLine();
+
+			_baselineFileMonitor.StatusChanged += OnStatusChanged;
+
+			
+			try
 			{
-				if (status.Status == MonitoringStatusType.Started)
+				foreach (var alert in baselineIterator)
 				{
-					AnsiConsole.MarkupLine($"[green]Monitoring started at {status.TimeStamp.ToLocalTime()}[/]");
+					
+					var rule = new Rule($"[bold red]Alert Detected[/]").RuleStyle("red").DottedBorder();
+					AnsiConsole.Write(rule);
+
+					AnsiConsole.MarkupLine($"[blue]{alert.AlertMessage}[/]");
+
+					AnsiConsole.WriteLine();
 				}
-				else if (status.Status == MonitoringStatusType.Stopped)
-				{
-					AnsiConsole.MarkupLine($"[red]Monitoring stopped at {status.TimeStamp.ToLocalTime()}[/]");
-				}
-				else if (status.Status == MonitoringStatusType.Error)
-				{
-					AnsiConsole.MarkupLine($"[red]Monitoring error at {status.TimeStamp.ToLocalTime()}[/]");
-				}
-				else if (status.Status == MonitoringStatusType.IntervalExceeded)
-				{
-					AnsiConsole.MarkupLine($"[yellow]Monitoring interval exceeded at {status.TimeStamp.ToLocalTime()}[/]");
-					AnsiConsole.MarkupLine($"[yellow]{status.Message}[/]");
-				}
-			};
-			var alertMessages = new HashSet<MonitoringAlert>();
-			foreach (var alert in baselineIterator)
-			{
-				var alertDisplayed = alertMessages.Add(alert);
-				var rule = new Rule($"[bold red]Alert Detected[/]").RuleStyle("red").DottedBorder();
-				AnsiConsole.Write(rule);
-				if (!alertDisplayed) AnsiConsole.MarkupLine($"[red]{alertMessages.Last().AlertMessage}[/]");
-				else AnsiConsole.MarkupLine($"[green]No new alerts detected.[/]");
-				AnsiConsole.WriteLine();
 			}
-
+			finally
+			{
+				_baselineFileMonitor.StatusChanged -= OnStatusChanged;
+			}
 			return;
 		}
 		public override ValidationResult Validate(CommandContext context, MonitorBaselineSettings settings)
