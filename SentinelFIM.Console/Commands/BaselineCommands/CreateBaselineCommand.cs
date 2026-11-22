@@ -115,12 +115,16 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 		}
 		public void CreateBaseline(CreateBaselineSettings settings)
 		{
+			AnsiConsole.MarkupLine("[blue]Note:[/] Baseline creation time depends on the number of files and the size of the directory tree.");
+			AnsiConsole.WriteLine();
+
 			var results = SaveBaseline(settings.Path, settings.OutputFile, settings.IsRecursive);
 			if (results.FilesSaved == 0) AnsiConsole.MarkupLine("[yellow]No Files Saved[/]");
 			else if(File.Exists(results.OutputPath))
 			{ 
 				AnsiConsole.MarkupLine($"[green]Baseline created successfully![/]"); 
 				AnsiConsole.MarkupLine($"[yellow]Output Path:[/] [bold]{Markup.Escape(results.OutputPath)}[/]");
+				AnsiConsole.MarkupLine($"[yellow]Baseline Size:[/] [bold]{results.BaselineFileSize}[/] bytes");
 				AnsiConsole.MarkupLine($"[yellow]Files Saved:[/] [bold]{results.FilesSaved}[/]");
 				if(results.Duration.TotalSeconds < 1) AnsiConsole.MarkupLine($"[yellow]Time Taken:[/] [bold]{results.Duration.TotalMilliseconds:F2}[/] milliseconds");
 				else AnsiConsole.MarkupLine($"[yellow]Time Taken:[/] [bold]{results.Duration.TotalSeconds:F2}[/] seconds");
