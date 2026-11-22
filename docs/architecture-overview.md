@@ -1,8 +1,12 @@
 # Architecture Overview
 
-SentinelFIM follows a layered, contract-driven architecture that separates application concerns into independent projects. This design allows monitoring, hashing, reporting, and client functionality to evolve independently while maintaining a consistent core feature set.
+SentinelFIM follows a layered, contract-driven architecture that separates business logic, infrastructure concerns, and presentation logic into independent projects.
 
-## Project Structure
+The architecture is designed around extensibility, maintainability, and separation of concerns, allowing monitoring implementations, hashing providers, storage mechanisms, and future presentation layers to evolve independently without requiring modifications to core application logic.
+
+---
+
+# Project Structure
 
 ```text
 Presentation
@@ -13,7 +17,6 @@ Infrastructure
 ├─ Hash Providers
 ├─ Baseline Storage
 ├─ Monitoring Implementations
-├─ Exporters
 └─ File Access
 
 Core
@@ -22,154 +25,173 @@ Core
 └─ Application Logic
 ```
 
-## Core
+---
 
-The Core project contains the application's business rules and contracts.
+# Core
+
+The Core project contains SentinelFIM's domain models, contracts, and application rules.
 
 Responsibilities include:
 
 - Domain models
-- Service contracts (interfaces)
-- Baseline comparison logic
 - Monitoring abstractions
 - Hashing abstractions
-- Reporting abstractions
+- Baseline abstractions
+- Monitoring alerts and status models
+- Application-level contracts
 
-The Core layer contains no platform-specific code and has no dependency on Infrastructure or Presentation.
+The Core layer contains no infrastructure-specific code and is independent of Presentation and Infrastructure projects.
 
-## Infrastructure
+This allows business logic to remain stable even as monitoring technologies, storage mechanisms, and user interfaces evolve over time.
+
+---
+
+# Infrastructure
 
 The Infrastructure project contains the concrete implementations required by Core contracts.
 
 Examples include:
 
-- SHA256 hash providers
+- SHA-256 hash providers
 - Baseline storage implementations
-- FileSystemWatcher monitoring implementations
+- Polling-based monitoring implementations
+- Filesystem access services
+
+Infrastructure depends on Core abstractions while Core remains completely independent of Infrastructure.
+
+This dependency direction allows implementations to be replaced without affecting application logic.
+
+Potential future implementations include:
+
+- Event-driven monitoring providers
+- Hybrid monitoring implementations
+- Additional hash providers
+- Alternative baseline formats
 - Export providers
-- Filesystem access providers
 
-Infrastructure depends on Core, but Core does not depend on Infrastructure.
+---
 
-## Presentation
+# Presentation
 
-The Presentation layer provides user interaction and application hosting.
+The Presentation layer hosts user-facing clients and application entry points.
 
 Current clients:
 
-- Command-line interface (CLI)
+- Command-Line Interface (CLI)
 
 Planned clients:
 
 - Desktop GUI
-- Mobile GUI
 
-Presentation depends on Core contracts and Infrastructure registrations but contains no business logic.
+Presentation is responsible for:
 
----
+- User interaction
+- Command execution
+- Rendering monitoring alerts
+- Rendering monitoring status notifications
+- Dependency Injection configuration
 
-# Service Resolution
-
-SentinelFIM uses an auto-discovery factory pattern to resolve implementations at runtime.
-
-Implementations expose a unique identifier through a contract property.
-
-Example:
-
-```csharp
-public interface IHashProvider
-{
-    string Name { get; }
-}
-```
-
-```csharp
-public sealed class Sha256HashProvider : IHashProvider
-{
-    public string Name => "SHA256";
-}
-```
-
-At startup, Dependency Injection registers all available implementations.
-
-Resolvers receive collections of implementations:
-
-```csharp
-IEnumerable<IHashProvider>
-```
-
-and construct lookup dictionaries that allow services to be selected using user-supplied identifiers:
-
-```csharp
-var provider = resolver.Resolve("SHA256");
-```
-
-This approach eliminates large switch statements, keeps the architecture extensible, and allows new implementations to be added without modifying existing resolution logic.
+Business logic remains within Core and Infrastructure components.
 
 ---
 
-# Extensibility
+# Dependency Injection
 
-Adding a new implementation generally requires:
+SentinelFIM uses Dependency Injection to decouple application logic from infrastructure implementations.
 
-1. Creating a new contract implementation.
-2. Registering the implementation with Dependency Injection.
-3. Providing a unique identifier.
+Core components depend on abstractions while Infrastructure provides concrete implementations.
 
 Examples include:
 
-- New hash algorithms
-- New baseline formats
-- New export formats
-- New monitoring implementations
+```csharp
+IHashProvider
+IBaselineStore
+IIntegrityMonitor
+```
 
-This approach supports the Open/Closed Principle by allowing new functionality to be added without modifying existing business logic.
+This approach allows implementations to be replaced without modifying consuming code and provides a foundation for future runtime implementation selection.
+
+The architecture favors composition over inheritance and keeps application logic independent from implementation details.
 
 ---
 
 # Monitoring Model
 
-SentinelFIM currently focuses on single-file integrity monitoring.
+SentinelFIM currently uses a baseline-driven monitoring model.
 
 The monitoring workflow is:
 
 ```text
-File
- ↓
-Baseline Generation
- ↓
-Baseline Storage
- ↓
-Real-Time Monitoring
- ↓
-Integrity Verification
- ↓
-Reporting
+Files & Directories
+          ↓
+  Baseline Generation
+          ↓
+   Baseline Storage
+          ↓
+  Continuous Monitoring
+          ↓
+ Integrity Verification
+          ↓
+    Alert Generation
 ```
+
+The baseline acts as the source of truth.
+
+Rather than comparing files against previous scans, monitored files are continuously evaluated against stored baseline data to detect integrity violations.
 
 Current capabilities include:
 
-- Single-file baseline generation
-- Single-file baseline verification
-- File modification detection
-- File creation detection
+- Baseline generation
+- Baseline persistence
+- Baseline loading
+- One-time integrity scans
+- Continuous integrity monitoring
+- Recursive directory scanning
+- Hash change detection
+- File size change detection
 - File deletion detection
-- Real-time monitoring using FileSystemWatcher
+- Monitoring status notifications
 
-The monitoring engine is designed to support future expansion into directory monitoring, recursive scanning, additional monitoring providers, and alternative event sources while maintaining the same Core contracts and service resolution model.
-<br>
+---
 
-Future enhancements may include:
+# Extensibility
 
-- Directory baseline generation
-- Recursive folder monitoring
-- Network share monitoring
-- Alternative filesystem event providers
-- Concurrent monitoring operations
-- Distributed monitoring agents
+SentinelFIM is designed to support future expansion through interchangeable implementations and contract-driven development.
+
+Potential future enhancements include:
+
+## Monitoring
+
+- In-memory monitoring
+- Event-driven monitoring
+- Hybrid monitoring approaches
+- Additional monitoring providers
+- Runtime monitor selection
+
+## Reporting
+
+- JSON exports
+- CSV exports
+- XML exports
+- Additional export providers
+
+## User Experience
+
+- Desktop GUI
+- Enhanced monitoring views
+- Alert management improvements
+
+## Quality & Testing
+
+- Expanded automated test coverage
+- Native AOT evaluation
+- Additional integration testing
+
+New implementations can be introduced without modifying existing business rules by adhering to Core contracts.
+
+---
 
 # Design Principles
-<br>
 
 Several architectural principles guide SentinelFIM's design:
 
@@ -179,8 +201,16 @@ Several architectural principles guide SentinelFIM's design:
 - Composition over Inheritance
 - Interface-Driven Development
 - Dependency Injection
-- Extensibility Through Discovery
+- Extensibility Through Abstraction
 
-<br>
+The goal is to keep business rules independent from implementation details while allowing the platform to evolve without requiring large-scale refactoring.
 
-By centering the application around contracts defined in Core and resolving implementations through Dependency Injection at runtime, SentinelFIM remains modular, testable, and easily extensible without requiring modifications to existing business logic.
+---
+
+# Current Architectural Status
+
+SentinelFIM currently focuses on delivering a complete command-line File Integrity Monitoring platform built around baseline comparison and continuous polling-based monitoring.
+
+The current implementation emphasizes correctness, maintainability, and extensibility while establishing architectural foundations for additional monitoring providers, automated testing, reporting capabilities, and future graphical user interfaces.
+
+Future releases will expand monitoring capabilities while preserving the existing architectural boundaries between Core, Infrastructure, and Presentation layers.
