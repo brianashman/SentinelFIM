@@ -29,7 +29,7 @@ namespace SentinelFIM.Infrastructure.Monitoring.Baseline
 	// Continuous polling generates duplicate alerts for files that remain
 	// in the same state across scans. When file logging is implemented,
 	// track alert state transitions and only log detected/resolved events.
-	public class PollingBaselineFileMonitor : IBaselineFileMonitor
+	public class PollingBaselineFileMonitor : IIntegrityMonitor
 	{
 		private readonly ILogger<PollingBaselineFileMonitor> _logger;
 		private readonly Dictionary<string, ScanResult> _inMemoryBaseline;

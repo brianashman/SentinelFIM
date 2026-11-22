@@ -9,7 +9,7 @@ namespace SentinelFIM.Core.Monitoring.Baseline
 	// Add monitoring exporter factory.
 	// Exporters selected by self-identifying format name.
 	// Monitor optionally exports alerts as they are generated.
-	public interface IBaselineFileMonitor
+	public interface IIntegrityMonitor
 	{
 		event EventHandler<MonitoringStatus> StatusChanged;
 		IEnumerable<MonitoringAlert> Scan(string path, CancellationToken cancellationToken); //Single Check

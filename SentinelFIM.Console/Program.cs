@@ -24,7 +24,7 @@ builder.Logging.ClearProviders();
 builder.Services.AddSingleton<IHashProvider, SHA256HashProvider>();
 builder.Services.AddSingleton<IBaselineStore, JsonBaselineStore>();
 builder.Services.AddSingleton<BaselineCreator>();
-builder.Services.AddSingleton<IBaselineFileMonitor, PollingBaselineFileMonitor>();
+builder.Services.AddSingleton<IIntegrityMonitor, PollingBaselineFileMonitor>();
 //File provider name conflicts with an existing IFileProvider and FileSystemProvider
 //Used the full namespace for the interface as a compensating control
 builder.Services.AddSingleton<SentinelFIM.Core.Files.IFileProvider, SentinelFIM.Infrastructure.Files.FileSystemProvider>();

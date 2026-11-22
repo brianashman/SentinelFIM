@@ -9,13 +9,13 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 {
 	public class MonitorBaselineCommand : Command<MonitorBaselineSettings>
 	{
-		private readonly IBaselineFileMonitor _baselineFileMonitor;
+		private readonly IIntegrityMonitor _baselineFileMonitor;
 		private readonly ILogger<MonitorBaselineCommand> _logger;
 
 		// Starts at 9 so the first interval warning is shown immediately.
 		// Afterwards, the warning is only shown every 10 occurrences.
 		private int counter = 9;
-		public MonitorBaselineCommand(IBaselineFileMonitor baselineFileMonitor, 
+		public MonitorBaselineCommand(IIntegrityMonitor baselineFileMonitor, 
 			ILogger<MonitorBaselineCommand> logger)
 		{
 			_baselineFileMonitor = baselineFileMonitor;
