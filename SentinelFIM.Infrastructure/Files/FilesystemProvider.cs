@@ -2,6 +2,7 @@
 using SentinelFIM.Core.Files;
 using SentinelFIM.Core.Identifiers;
 using SentinelFIM.Core.Models;
+using System.Diagnostics;
 
 namespace SentinelFIM.Infrastructure.Files
 {
@@ -13,7 +14,42 @@ namespace SentinelFIM.Infrastructure.Files
 		{
 			_logger = logger;
 		}
-
+		private IEnumerable<string> EnumerateRecursive(string path)
+		{
+			//Enumerates files in current directory
+			IEnumerable<string> files;
+			try
+			{
+				files = Directory.EnumerateFiles(path);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				_logger.LogWarning("Access denied to directory: {path}", path);
+				yield break;
+			}
+			foreach (var file in files)
+			{
+				yield return file;
+			}
+			//Enumerates subdirectories in current directory
+			IEnumerable<string> directories;
+			try
+			{
+				directories = Directory.EnumerateDirectories(path);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				_logger.LogWarning("Access denied to directory: {path}", path);
+				yield break;
+			}
+			foreach (var directory in directories)
+			{
+				foreach (var file in EnumerateRecursive(directory))
+				{
+					yield return file;
+				}
+			}
+		}
 		public IEnumerable<string> EnumeratePaths(string path, string searchOption)
 		{
 			try
@@ -27,7 +63,7 @@ namespace SentinelFIM.Infrastructure.Files
 				// Use a switch expression to determine the search option
 				return searchOption switch
 				{
-					EnumerationSearchOption.AllDirectories => Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories),
+					EnumerationSearchOption.AllDirectories => EnumerateRecursive(path),
 					EnumerationSearchOption.RootOnly => Directory.EnumerateFiles(path, "*", SearchOption.TopDirectoryOnly),
 					_ => throw new ArgumentOutOfRangeException(nameof(searchOption), searchOption, null),
 				};
