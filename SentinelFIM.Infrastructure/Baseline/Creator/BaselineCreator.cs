@@ -16,7 +16,7 @@ namespace SentinelFIM.Infrastructure.Baseline.Creator
 			_fileProvider = fileProvider;
 			_hashProvider = hashProvider;
 		}
-		public IEnumerable<ScanResult> CreateDirectoryBaseline(string directoryPath, bool isRecursive)
+		public IEnumerable<ScanResult> CreateDirectoryBaseline(string directoryPath, bool isRecursive, CancellationToken cancellationToken)
 		{
 			_logger.LogInformation("Creating baseline for directory: {Path}, Recursive: {Recursive}", directoryPath, isRecursive);
 
@@ -28,6 +28,7 @@ namespace SentinelFIM.Infrastructure.Baseline.Creator
 			else files = _fileProvider.EnumeratePaths(directoryPath, EnumerationSearchOption.RootOnly);
 			foreach (var file in files)
 			{
+				cancellationToken.ThrowIfCancellationRequested();
 				yield return CreateFileBaseline(file);
 			}
 		}

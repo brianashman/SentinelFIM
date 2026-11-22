@@ -6,6 +6,7 @@ using SentinelFIM.Core.Models;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System.Diagnostics;
+using System.Timers;
 
 namespace SentinelFIM.Console.Commands.BaselineCommands
 {
@@ -22,7 +23,8 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 			_logger = logger;
 			_fileProvider = fileProvider;
 		}
-		private BaselineResults SaveBaseline(string path, string outputFile, bool isRecursive) => _baselineStore.SaveBaseline(path, outputFile, isRecursive);
+		private BaselineResults SaveBaseline(string path, string outputFile, bool isRecursive, CancellationToken cancellationToken) => 
+			_baselineStore.SaveBaseline(path, outputFile, isRecursive, cancellationToken);
 		private void DisplayEnumerationResults(IReadOnlyList<string> values, int count, string path)
 		{
 			var directoryCount = values
@@ -113,27 +115,47 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 			}
 			else return ValidationResult.Success();
 		}
-		public void CreateBaseline(CreateBaselineSettings settings)
+		public void CreateBaseline(CreateBaselineSettings settings, CancellationToken cancellationToken)
 		{
-			AnsiConsole.MarkupLine("[blue]Note:[/] Baseline creation time depends on the number of files and the size of the directory tree.");
-			AnsiConsole.WriteLine();
-
-			var results = SaveBaseline(settings.Path, settings.OutputFile, settings.IsRecursive);
-			if (results.FilesSaved == 0) AnsiConsole.MarkupLine("[yellow]No Files Saved[/]");
-			else if(File.Exists(results.OutputPath))
-			{ 
-				AnsiConsole.MarkupLine($"[green]Baseline created successfully![/]"); 
-				AnsiConsole.MarkupLine($"[yellow]Output Path:[/] [bold]{Markup.Escape(results.OutputPath)}[/]");
-				AnsiConsole.MarkupLine($"[yellow]Baseline Size:[/] [bold]{results.BaselineFileSize}[/] bytes");
-				AnsiConsole.MarkupLine($"[yellow]Files Saved:[/] [bold]{results.FilesSaved}[/]");
-				if(results.Duration.TotalSeconds < 1) AnsiConsole.MarkupLine($"[yellow]Time Taken:[/] [bold]{results.Duration.TotalMilliseconds:F2}[/] milliseconds");
-				else AnsiConsole.MarkupLine($"[yellow]Time Taken:[/] [bold]{results.Duration.TotalSeconds:F2}[/] seconds");
+			try
+			{
+				AnsiConsole.MarkupLine("[blue]Note:[/] Baseline creation time depends on the number of files and the size of the directory tree.");
+				var panel = new Panel("[yellow]Press [bold red]Ctrl+C[/] to stop creation[/]").BorderColor(Color.Red);
+				AnsiConsole.Write(panel);
+				BaselineResults results = new BaselineResults(0, String.Empty, TimeSpan.Zero, 0);
+				AnsiConsole.Status()
+					.Spinner(Spinner.Known.Dots10)
+					.SpinnerStyle(Style.Parse("green"))
+					.Start("Creating Baseline...", ctx =>
+					{
+						results = _baselineStore.SaveBaseline(settings.Path, settings.OutputFile, settings.IsRecursive, cancellationToken);
+						//Task.Delay(100).Wait(); // Add a small delay for testing purposes
+						ctx.Status("Done");
+						// Add a small delay for testing purposes
+						//Task.Delay(100).Wait();
+						AnsiConsole.WriteLine();
+					});
+			
+				if (results.FilesSaved == 0) AnsiConsole.MarkupLine("[yellow]No Files Saved[/]");
+				else if(File.Exists(results.OutputPath))
+				{ 
+					AnsiConsole.MarkupLine($"[green]Baseline created successfully![/]"); 
+					AnsiConsole.MarkupLine($"[yellow]Output Path:[/] [bold]{Markup.Escape(results.OutputPath)}[/]");
+					AnsiConsole.MarkupLine($"[yellow]Baseline Size:[/] [bold]{results.BaselineFileSize}[/] bytes");
+					AnsiConsole.MarkupLine($"[yellow]Files Saved:[/] [bold]{results.FilesSaved}[/]");
+					if(results.Duration.TotalSeconds < 1) AnsiConsole.MarkupLine($"[yellow]Time Taken:[/] [bold]{results.Duration.TotalMilliseconds:F2}[/] milliseconds");
+					else AnsiConsole.MarkupLine($"[yellow]Time Taken:[/] [bold]{results.Duration.TotalSeconds:F2}[/] seconds");
+				}
+			}
+			catch(OperationCanceledException)
+			{
+				AnsiConsole.MarkupLine("[red]Baseline creation was canceled.[/]");
 			}
 		}
 		public override int Execute(CommandContext context, CreateBaselineSettings settings, CancellationToken cancellationToken)
 		{
 			if (settings.Preview) PreviewBaseline(settings.Path);
-			else CreateBaseline(settings);
+			else CreateBaseline(settings, cancellationToken);
 			return 0;
 		}
 	}

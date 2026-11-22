@@ -44,7 +44,7 @@ namespace SentinelFIM.Infrastructure.Baseline.Store
 			return scanResults!;	
 		}
 
-		public BaselineResults SaveBaseline(string path, string outputPath, bool isRecursive)
+		public BaselineResults SaveBaseline(string path, string outputPath, bool isRecursive, CancellationToken cancellationToken)
 		{
 			Stopwatch timer = new();
 			string createdOutputFile = Path.GetFullPath(outputPath);
@@ -56,7 +56,7 @@ namespace SentinelFIM.Infrastructure.Baseline.Store
 			List<ScanResult> baseline = new();
 			if (isDirectory)
 			{
-				baseline.AddRange(_baselineCreator.CreateDirectoryBaseline(path, isRecursive));
+				baseline.AddRange(_baselineCreator.CreateDirectoryBaseline(path, isRecursive, cancellationToken));
 			}
 			else if (isFile)
 			{
