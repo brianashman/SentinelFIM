@@ -15,7 +15,6 @@ namespace SentinelFIM.Tests
 		private readonly Mock<IHashProvider> _hashProviderMock;
 		private readonly Mock<ILogger<BaselineCreator>> _loggerMock;
 
-		private string _searchOption = EnumerationSearchOption.RootOnly; // Default search option for testing
 		private readonly HashSet<string> _testPaths;
 		private readonly string _testDirectoryPath;
 		private readonly string _testHashAlgorithm = "SHA256"; // Default hash algorithm for testing
@@ -65,6 +64,29 @@ namespace SentinelFIM.Tests
 		public void CreateDirectoryBaseline_RootOnly_ReturnsExpectedScanResults()
 		{
 			var results = _baselineCreator.CreateDirectoryBaseline(_testDirectoryPath, false, CancellationToken.None).ToList();
+			Assert.Equal(_testPaths.Count, results.Count);
+			foreach (var result in results)
+			{
+				Assert.Equal(Path.GetFileName(result.Path), result.FileName);
+				Assert.Equal(_testHashValue, result.Hash);
+				Assert.Equal(_testHashAlgorithm, result.Algorithm);
+				Assert.Contains(result.Path, _testPaths);
+				var expectedSize = new FileInfo(result.Path).Length;
+				Assert.Equal(expectedSize, result.FileSize);
+			}
+		}
+		[Fact]
+		public void CreateDirectoryBaseline_AllDirectories_ReturnsExpectedScanResults()
+		{
+
+			var subDirectoryName = "subdir";
+			var subDirectoryPath = FileSystemTestUtilities.CreateSubDirectory(_testDirectoryPath, subDirectoryName);
+			FileSystemTestUtilities.AddFilesToDirectory(subDirectoryPath, "test1.txt", "test2.txt", "test3.txt");
+
+			_testPaths.UnionWith(FileSystemTestUtilities.CreateExpectedPaths(subDirectoryPath, "test1.txt", "test2.txt", "test3.txt"));
+
+			var results = _baselineCreator.CreateDirectoryBaseline(_testDirectoryPath, true, CancellationToken.None).ToList();
+
 			Assert.Equal(_testPaths.Count, results.Count);
 			foreach (var result in results)
 			{
