@@ -15,8 +15,6 @@ namespace SentinelFIM.Tests
 			_loggerMock = new Mock<ILogger<FileSystemProvider>>();
 			_filesystemProvider = new FileSystemProvider(_loggerMock.Object);
 		}
-		
-
 
 		[Fact]
 		public void EnumeratePaths_ValidDirectory_ReturnsAllFiles()
