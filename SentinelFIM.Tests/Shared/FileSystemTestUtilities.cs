@@ -44,5 +44,15 @@ namespace SentinelFIM.Tests.Shared
 		{
 			if (Directory.Exists(directoryPath)) Directory.Delete(directoryPath, true);
 		}
+		public static HashSet<string> CreateExpectedPaths(string directoryPath, params string[] fileNames)
+		{
+			var paths = new HashSet<string>();
+			foreach (var file in fileNames)
+			{
+				var filePath = Path.Combine(directoryPath, file);
+				paths.Add(filePath);
+			}
+			return paths;
+		}
 	}
 }

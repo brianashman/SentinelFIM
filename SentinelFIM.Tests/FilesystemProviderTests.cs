@@ -27,11 +27,19 @@ namespace SentinelFIM.Tests
 
 				directoryPath = FileSystemTestUtilities.CreateRandomTestDirectoryWithFiles("test1.txt", "test2.txt", "test3.txt");
 
-				var stringPaths = _filesystemProvider.EnumeratePaths(directoryPath, EnumerationSearchOption.RootOnly).ToHashSet();
 
+				//Added subdirectory to ensure RootOnly option does not include files from subdirectories
+				var subdirectoryName = "subdir";
+				var subDirectoryPath = FileSystemTestUtilities.CreateSubDirectory(directoryPath, subdirectoryName);
+				FileSystemTestUtilities.AddFilesToDirectory(subDirectoryPath, "test1.txt", "test2.txt", "test3.txt");
+
+				var stringPaths = _filesystemProvider.EnumeratePaths(directoryPath, EnumerationSearchOption.RootOnly).ToHashSet();
+				//var stringPaths = _filesystemProvider.EnumeratePaths(directoryPath, EnumerationSearchOption.AllDirectories).ToHashSet();
 
 				//Assert that the enumerated paths match the expected paths
-				HashSet<string> expectedPaths = Directory.EnumerateFiles(directoryPath, "*", SearchOption.TopDirectoryOnly).ToHashSet();
+				//Manually create the expected paths to avoid relying on Directory.EnumerateFiles, due to custom logic in the FileSystemProvider that may differ from the behavior of Directory.EnumerateFiles.
+				var expectedPaths = FileSystemTestUtilities.CreateExpectedPaths(directoryPath, "test1.txt", "test2.txt", "test3.txt");
+
 				Assert.Equal(expectedPaths, stringPaths);
 			}
 			finally
@@ -55,10 +63,18 @@ namespace SentinelFIM.Tests
 
 
 				var stringPaths = _filesystemProvider.EnumeratePaths(directoryPath, EnumerationSearchOption.AllDirectories).ToHashSet();
-				
+
 				//Assert that the enumerated paths match the expected paths
-				HashSet<string> expectedPaths = Directory.EnumerateFiles(directoryPath, "*", SearchOption.AllDirectories).ToHashSet();
-				Assert.Equal(expectedPaths, stringPaths);
+				//Manually create the expected paths to avoid relying on Directory.EnumerateFiles, due to custom logic in the FileSystemProvider that may differ from the behavior of Directory.EnumerateFiles.
+
+				
+				var expectedPaths = FileSystemTestUtilities.CreateExpectedPaths(directoryPath, "test1.txt", "test2.txt", "test3.txt", "test4.txt");
+				var expectedSubdirectoryPaths = FileSystemTestUtilities.CreateExpectedPaths(subDirectoryPath, "test1.txt", "test2.txt", "test3.txt");
+
+				var combinedExpectedPaths = new HashSet<string>(expectedPaths);
+				combinedExpectedPaths.UnionWith(expectedSubdirectoryPaths);
+
+				Assert.Equal(combinedExpectedPaths, stringPaths);
 			}
 			finally
 			{
@@ -72,7 +88,7 @@ namespace SentinelFIM.Tests
 			try
 			{
 				directoryPath = FileSystemTestUtilities.CreateRandomTestDirectory();
-
+					
 				var stringPaths = _filesystemProvider.EnumeratePaths(directoryPath, EnumerationSearchOption.RootOnly).ToHashSet();
 
 				//Assert that enumerated paths return an empty collection
