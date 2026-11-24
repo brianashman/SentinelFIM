@@ -3,7 +3,7 @@ using Moq;
 using SentinelFIM.Core.Models;
 using SentinelFIM.Infrastructure.Files;
 using System.Diagnostics;
-
+using SentinelFIM.Tests.Shared;
 namespace SentinelFIM.Tests
 {
 	public class FilesystemProviderTests
@@ -15,50 +15,73 @@ namespace SentinelFIM.Tests
 			_loggerMock = new Mock<ILogger<FileSystemProvider>>();
 			_filesystemProvider = new FileSystemProvider(_loggerMock.Object);
 		}
+		
+
+
 		[Fact]
 		public void EnumeratePaths_ValidDirectory_ReturnsAllFiles()
 		{
-			string testDirectory = string.Empty;
+			string directoryPath = string.Empty;
 			try
 			{
-				testDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-				Directory.CreateDirectory(testDirectory);
 
-				var testFile1 = Path.Combine(testDirectory, "test1.txt");
-				var testFile2 = Path.Combine(testDirectory, "test2.txt");
-				var testFile3 = Path.Combine(testDirectory, "test3.txt");
+				directoryPath = FileSystemTestUtilities.CreateRandomTestDirectoryWithFiles("test1.txt", "test2.txt", "test3.txt");
 
-				File.WriteAllText(testFile1, "Test file 1");
-				File.WriteAllText(testFile2, "Test file 2");
-				File.WriteAllText(testFile3, "Test file 3");
+				var stringPaths = _filesystemProvider.EnumeratePaths(directoryPath, EnumerationSearchOption.RootOnly).ToHashSet();
 
-				var stringPaths = _filesystemProvider.EnumeratePaths(testDirectory, EnumerationSearchOption.RootOnly).ToHashSet();
 
-				//All paths enumerated should exist
-				foreach (var path in stringPaths)
-				{
-					Assert.True(File.Exists(path), $"File does not exist: {path}");
-				}
-
-				HashSet<string> expectedPaths = Directory.EnumerateFiles(testDirectory, "*", SearchOption.TopDirectoryOnly).ToHashSet();
+				//Assert that the enumerated paths match the expected paths
+				HashSet<string> expectedPaths = Directory.EnumerateFiles(directoryPath, "*", SearchOption.TopDirectoryOnly).ToHashSet();
 				Assert.Equal(expectedPaths, stringPaths);
 			}
 			finally
 			{
-				if(Directory.Exists(testDirectory)) Directory.Delete(testDirectory, true);
+				FileSystemTestUtilities.DeleteTestDirectoryRecursive(directoryPath);
 			}
 		}
 
-		///<summary>
-		///To be implemented: 
-		///Test for recursive enumeration of files in subdirectories
-		///</summary>
-		//[Fact]
-		//public void EnumeratePaths_RecursiveEnumeration_ReturnsAllFilesInSubdirectories()
-		//{
-		//	//Test Recursive Enumeration
-		//	var testSubdirectory = Path.Combine(testDirectory, "subdir");
-		//	Directory.CreateDirectory(testSubdirectory);
-		//}
+		[Fact]
+		public void EnumeratePaths_RecursiveEnumeration_ReturnsAllFilesInSubdirectories()
+		{
+			var directoryPath = string.Empty;
+			try
+			{
+				directoryPath = FileSystemTestUtilities.CreateRandomTestDirectoryWithFiles("test1.txt", "test2.txt", "test3.txt", "test4.txt");
+				
+				var subdirectoryName = "subdir";
+				var subDirectoryPath = FileSystemTestUtilities.CreateSubDirectory(directoryPath, subdirectoryName);
+				
+				FileSystemTestUtilities.AddFilesToDirectory(subDirectoryPath, "test1.txt", "test2.txt", "test3.txt");
+
+
+				var stringPaths = _filesystemProvider.EnumeratePaths(directoryPath, EnumerationSearchOption.AllDirectories).ToHashSet();
+				
+				//Assert that the enumerated paths match the expected paths
+				HashSet<string> expectedPaths = Directory.EnumerateFiles(directoryPath, "*", SearchOption.AllDirectories).ToHashSet();
+				Assert.Equal(expectedPaths, stringPaths);
+			}
+			finally
+			{
+				FileSystemTestUtilities.DeleteTestDirectoryRecursive(directoryPath);
+			}
+		}
+		[Fact]
+		public void EnumeratePaths_EmptyDirectory_ReturnsEmptyCollection()
+		{
+			var directoryPath = string.Empty;
+			try
+			{
+				directoryPath = FileSystemTestUtilities.CreateRandomTestDirectory();
+
+				var stringPaths = _filesystemProvider.EnumeratePaths(directoryPath, EnumerationSearchOption.RootOnly).ToHashSet();
+
+				//Assert that enumerated paths return an empty collection
+				Assert.Empty(stringPaths);
+			}
+			finally
+			{
+				FileSystemTestUtilities.DeleteTestDirectoryRecursive(directoryPath);
+			}
+		}
 	}
 }
