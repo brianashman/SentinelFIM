@@ -34,22 +34,22 @@ namespace SentinelFIM.Infrastructure.Monitoring.Baseline
 		private readonly ILogger<PollingBaselineFileMonitor> _logger;
 		private readonly Dictionary<string, ScanResult> _inMemoryBaseline;
 		private readonly IHashProvider _hashProvider;
-		private readonly IBaselineStore _baselineStore;
+		private readonly IBaselineReader _baselineReader;
 		private string? baselinePath = null;
 		public event EventHandler<MonitoringStatus>? StatusChanged;
 
-		public PollingBaselineFileMonitor(ILogger<PollingBaselineFileMonitor> logger, IHashProvider hashProvider, IBaselineStore baselineStore)
+		public PollingBaselineFileMonitor(ILogger<PollingBaselineFileMonitor> logger, IHashProvider hashProvider, IBaselineReader baselineReader)
 		{
 			_logger = logger;
 			_hashProvider = hashProvider;
-			_baselineStore = baselineStore;
+			_baselineReader = baselineReader;
 			_inMemoryBaseline = new Dictionary<string, ScanResult>();
 		}
 		private void LoadBaseline(string path)
 		{
 			_logger.LogInformation("Loading baseline from file: {Path}", path);
 			_inMemoryBaseline.Clear();
-			var results = _baselineStore.LoadBaseline(path);
+			var results = _baselineReader.LoadBaseline(path);
 			foreach (var item in results)
 			{
 				_inMemoryBaseline.Add(item.Path, item);

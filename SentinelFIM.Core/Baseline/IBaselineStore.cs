@@ -5,10 +5,7 @@ using System.Text;
 
 namespace SentinelFIM.Core.Baseline
 {
-	public interface IBaselineStore
+	public interface IBaselineStore : IBaselineReader, IBaselineWriter
 	{
-		string Format { get; }
-		IEnumerable<ScanResult> LoadBaseline(string path);
-		BaselineResults SaveBaseline(string path, string outputPath, bool isRecursive, CancellationToken cancellationToken);
 	}
 }

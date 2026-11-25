@@ -7,7 +7,7 @@ using SentinelFIM.Core.Hashing;
 using SentinelFIM.Core.Models;
 using SentinelFIM.Core.Monitoring.Baseline;
 using SentinelFIM.Infrastructure.Baseline.Creator;
-using SentinelFIM.Infrastructure.Baseline.Store;
+using SentinelFIM.Infrastructure.Baseline.Store.Json;
 using SentinelFIM.Infrastructure.Hashing;
 using SentinelFIM.Infrastructure.Monitoring.Baseline;
 using Spectre.Console.Cli;
@@ -22,7 +22,8 @@ builder.Logging.ClearProviders();
 #region Services
 //Infrastructure & Core Services
 builder.Services.AddSingleton<IHashProvider, SHA256HashProvider>();
-builder.Services.AddSingleton<IBaselineStore, JsonBaselineStore>();
+builder.Services.AddSingleton<IBaselineReader, JsonBaselineReader>();
+builder.Services.AddSingleton<IBaselineWriter, JsonBaselineWriter>();
 builder.Services.AddSingleton<BaselineCreator>();
 builder.Services.AddSingleton<IIntegrityMonitor, PollingBaselineFileMonitor>();
 //File provider name conflicts with an existing IFileProvider and FileSystemProvider

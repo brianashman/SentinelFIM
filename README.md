@@ -119,9 +119,8 @@ SentinelFIM currently supports:
 
 ### Quality & Testing
 
-- Expanded automated test coverage
+- Automated Integration Testing
 - Native AOT evaluation
-- Additional integration testing
 
 ---
 

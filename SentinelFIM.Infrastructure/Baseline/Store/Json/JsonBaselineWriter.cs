@@ -3,47 +3,24 @@ using SentinelFIM.Core.Baseline;
 using SentinelFIM.Core.Identifiers;
 using SentinelFIM.Core.Models;
 using SentinelFIM.Infrastructure.Baseline.Creator;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 using System.Text.Json;
 
-namespace SentinelFIM.Infrastructure.Baseline.Store
+namespace SentinelFIM.Infrastructure.Baseline.Store.Json
 {
-	// Algorithm is autosupplied via DI container temporarily for baselinecreator.
-	// This class is responsible for saving and loading baseline data in JSON format.
-	public class JsonBaselineStore : IBaselineStore
+	public class JsonBaselineWriter : IBaselineWriter
 	{
 		public string Format => OutputFormat.Json;
-		private readonly ILogger<JsonBaselineStore> _logger;
+		private readonly ILogger<JsonBaselineReader> _logger;
 		private readonly BaselineCreator _baselineCreator;
-		public JsonBaselineStore(ILogger<JsonBaselineStore> logger, BaselineCreator baselineCreator)
+		public JsonBaselineWriter(ILogger<JsonBaselineReader> logger, BaselineCreator baselineCreator)
 		{
 			_logger = logger;
 			_baselineCreator = baselineCreator;
 		}
-
-		public IEnumerable<ScanResult> LoadBaseline(string path)
-		{
-			FileInfo baseline = new FileInfo(path);
-
-			if(!baseline.Exists)
-			{
-				_logger.LogWarning("Baseline file not found: {Path}", path);
-				throw new FileNotFoundException($"Baseline file not found: {path}");
-			}
-			var serializerOptions = new JsonSerializerOptions
-			{
-				PropertyNameCaseInsensitive = true,
-			};
-
-			_logger.LogInformation("Loading baseline from file: {Path}", path);
-			using var stream = baseline.OpenRead();
-			var scanResults = JsonSerializer.Deserialize<IEnumerable<ScanResult>>(
-				stream, 
-				serializerOptions
-				);
-			return scanResults!;	
-		}
-
 		public BaselineResults SaveBaseline(string path, string outputPath, bool isRecursive, CancellationToken cancellationToken)
 		{
 			Stopwatch timer = new();
