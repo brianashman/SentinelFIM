@@ -1,0 +1,18 @@
+[
+  {
+    "FileName": "config.json",
+    "Path": ".\\config.json",
+    "Hash": "BAFA664992749CD475DE56FE04F528229E4F7FF0DB33ECE40218823F86438F4C",
+    "Algorithm": "sha256",
+    "FileSize": 55,
+    "CreatedAt": "2026-11-26T00:50:01.6108719Z"
+  },
+  {
+    "FileName": "readme.txt",
+    "Path": ".\\readme.txt",
+    "Hash": "254E37C9BA6026763A4A363908615BF152F827537A705287F3B2E5F5E2145F19",
+    "Algorithm": "sha256",
+    "FileSize": 52,
+    "CreatedAt": "2026-11-26T00:50:01.6207703Z"
+  }
+]

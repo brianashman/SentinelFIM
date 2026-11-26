@@ -1,0 +1,3 @@
+- Update documentation
+- Review alerts
+- Test monitoring

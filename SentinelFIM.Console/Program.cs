@@ -24,6 +24,7 @@ builder.Logging.ClearProviders();
 builder.Services.AddSingleton<IHashProvider, SHA256HashProvider>();
 builder.Services.AddSingleton<IBaselineReader, JsonBaselineReader>();
 builder.Services.AddSingleton<IBaselineWriter, JsonBaselineWriter>();
+builder.Services.AddSingleton<IBaselineStore, JsonBaselineStore>();
 builder.Services.AddSingleton<BaselineCreator>();
 builder.Services.AddSingleton<IIntegrityMonitor, PollingBaselineFileMonitor>();
 //File provider name conflicts with an existing IFileProvider and FileSystemProvider

@@ -14,12 +14,12 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 	//Reminder to implement results display for baseline creation.
 	public class CreateBaselineCommand: Command<CreateBaselineSettings>
 	{
-		private readonly IBaselineStore _baselineStore;
+		private readonly IBaselineWriter _baselineWriter;
 		private readonly ILogger<CreateBaselineCommand> _logger;
 		private readonly Core.Files.IFileProvider _fileProvider;
-		public CreateBaselineCommand(IBaselineStore baselineStore, ILogger<CreateBaselineCommand> logger, Core.Files.IFileProvider fileProvider)
+		public CreateBaselineCommand(IBaselineWriter baselineWriter, ILogger<CreateBaselineCommand> logger, Core.Files.IFileProvider fileProvider)
 		{
-			_baselineStore = baselineStore;
+			_baselineWriter = baselineWriter;
 			_logger = logger;
 			_fileProvider = fileProvider;
 		}
@@ -126,7 +126,7 @@ namespace SentinelFIM.Console.Commands.BaselineCommands
 					.SpinnerStyle(Style.Parse("green"))
 					.Start("Creating Baseline...", ctx =>
 					{
-						results = _baselineStore.SaveBaseline(settings.Path, settings.OutputFile, settings.IsRecursive, cancellationToken);
+						results = _baselineWriter.SaveBaseline(settings.Path, settings.OutputFile, settings.IsRecursive, cancellationToken);
 						//Task.Delay(100).Wait(); // Add a small delay for testing purposes
 						ctx.Status("Done");
 						// Add a small delay for testing purposes
