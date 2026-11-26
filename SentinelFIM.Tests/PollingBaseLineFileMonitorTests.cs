@@ -6,6 +6,7 @@ using SentinelFIM.Core.Monitoring.Baseline;
 using SentinelFIM.Infrastructure.Baseline.Store.Json;
 using SentinelFIM.Infrastructure.Hashing;
 using SentinelFIM.Infrastructure.Monitoring.Baseline;
+using SentinelFIM.Tests.Shared;
 
 namespace SentinelFIM.Tests
 {
@@ -19,7 +20,6 @@ namespace SentinelFIM.Tests
 		
 		private readonly PollingBaselineFileMonitor _baselineFileMonitor;
 		
-		private readonly string _testDirectoryPath;
 		
 		public PollingBaseLineFileMonitorTests()
 		{
@@ -30,11 +30,24 @@ namespace SentinelFIM.Tests
 			_baselineFileMonitor = new PollingBaselineFileMonitor(_monitorLoggerMock.Object, _hashProvider, _baselineReader);
 		}
 
+		
+		private void DisposeTestEnvironment(string directory) => FileSystemTestUtilities.DeleteTestDirectoryRecursive(directory);
+
 		//Private methods constitute the internal class implementation and will not be tested.
 		[Fact]
 		public void Scan_DetectsChangesInBaselineFile()
 		{
-
+			string testDirectoryPath = String.Empty;
+			try
+			{
+				testDirectoryPath = FileSystemTestUtilities.CreateRandomTestDirectory();
+				var testEnvironmentPaths = MonitoringTestUtilities.GetTestEnvironment();
+				var result = MonitoringTestUtilities.CopyTestEnvironmentToTemp(testEnvironmentPaths, testDirectoryPath);
+			}
+			finally
+			{
+				DisposeTestEnvironment(testDirectoryPath);
+			}
 		}
 	}
 }

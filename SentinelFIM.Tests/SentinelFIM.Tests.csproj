@@ -23,6 +23,11 @@
     <ProjectReference Include="..\SentinelFIM.Infrastructure\SentinelFIM.Infrastructure.csproj" />
   </ItemGroup>
 
+    <ItemGroup>
+	    <Content Include="Test Environment\**\*">
+		    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    </Content>
+    </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
