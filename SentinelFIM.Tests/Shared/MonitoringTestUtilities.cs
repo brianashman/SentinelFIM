@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Xunit.Internal;
-
-namespace SentinelFIM.Tests.Shared
+﻿namespace SentinelFIM.Tests.Shared
 {
 	public static class MonitoringTestUtilities
 	{
@@ -20,7 +15,7 @@ namespace SentinelFIM.Tests.Shared
 
 			return testEnvironmentDirectory;
 		}
-		public static string CopyTestEnvironmentToTemp(string sourceDirectory, string tempPath)
+		public static void CopyTestEnvironmentToTemp(string sourceDirectory, string tempPath)
 		{
 			if(!Directory.Exists(sourceDirectory)) throw new InvalidOperationException("The source directory for the test environment does not exist.");
 			
@@ -50,7 +45,51 @@ namespace SentinelFIM.Tests.Shared
 				}
 			}
 			CopyContents();
-			return tempPath;
+		}
+		// Not meant to be truly random, but to simulate changes in the test environment for testing purposes.
+		public static HashSet<string> ModifyTestEnvironment(string testEnvironment, SearchOption searchOption, int fileCount = 3)
+		{
+			var random = new Random();
+			string[] testFiles = Directory.GetFiles(testEnvironment, "*", searchOption).Where(file => !Path.GetFileName(file).Contains("baseline", StringComparison.OrdinalIgnoreCase)).ToArray();
+			int testFileCount = testFiles.Length;
+			if (testFileCount <= 0) throw new InvalidOperationException("No files available for modification in the test environment.");
+			
+
+			int modificationCount = random.Next(1, fileCount + 1); // Randomly choose how many files to modify (between 1 and fileCount)
+			if(modificationCount > testFileCount) modificationCount = testFileCount; // Ensure more files are not modified than exist
+
+			HashSet<string> filesToModify = new HashSet<string>();
+			
+			for (int i = 0; i < modificationCount; i++)
+			{
+				int fileIndex = random.Next(testFileCount);
+				if (filesToModify.Add(testFiles[fileIndex]))
+				{
+					File.AppendAllText(testFiles[fileIndex], $"// Modified at {DateTime.UtcNow}");
+				}
+				else i--;
+			}
+			return filesToModify;
+		}
+		public static string GetCurrentDirectoryBaselinePath(string directory)
+		{
+			if (!Directory.Exists(directory)) throw new InvalidOperationException("The specified directory does not exist.");
+
+			var files = Directory.GetFiles(directory, "*", SearchOption.TopDirectoryOnly);	
+
+			var result = files.FirstOrDefault(path => Path.GetFileName(path).Contains("baseline", StringComparison.OrdinalIgnoreCase) 
+			&& Path.GetFileName(path).StartsWith("current", StringComparison.OrdinalIgnoreCase));
+			return result ?? throw new InvalidOperationException("No non-recursive baseline file found in the specified directory.");
+		}
+		public static string GetRecursiveDirectoryBaselinePath(string directory)
+		{
+			if (!Directory.Exists(directory)) throw new InvalidOperationException("The specified directory does not exist.");
+
+			var files = Directory.GetFiles(directory, "*", SearchOption.TopDirectoryOnly);
+
+			var result = files.FirstOrDefault(path => Path.GetFileName(path).Contains("baseline", StringComparison.OrdinalIgnoreCase) 
+			&& Path.GetFileName(path).StartsWith("all", StringComparison.OrdinalIgnoreCase));
+			return result ?? throw new InvalidOperationException("No recursive baseline file found in the specified directory.");
 		}
 	}
 }

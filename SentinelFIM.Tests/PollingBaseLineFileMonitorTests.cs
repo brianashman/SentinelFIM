@@ -17,10 +17,10 @@ namespace SentinelFIM.Tests
 
 		private readonly IBaselineReader _baselineReader;
 		private readonly IHashProvider _hashProvider;
-		
+
 		private readonly PollingBaselineFileMonitor _baselineFileMonitor;
-		
-		
+
+
 		public PollingBaseLineFileMonitorTests()
 		{
 			_monitorLoggerMock = new Mock<ILogger<PollingBaselineFileMonitor>>();
@@ -30,19 +30,71 @@ namespace SentinelFIM.Tests
 			_baselineFileMonitor = new PollingBaselineFileMonitor(_monitorLoggerMock.Object, _hashProvider, _baselineReader);
 		}
 
-		
-		private void DisposeTestEnvironment(string directory) => FileSystemTestUtilities.DeleteTestDirectoryRecursive(directory);
 
-		//Private methods constitute the internal class implementation and will not be tested.
-		[Fact]
-		public void Scan_DetectsChangesInBaselineFile()
+		private void DisposeTestEnvironment(string directory) => FileSystemTestUtilities.DeleteTestDirectoryRecursive(directory);
+		private (string tempEnvPath, HashSet<string> modifiedFiles) CreateScanEnvironment(SearchOption searchOption, int fileCount = 3)
 		{
-			string testDirectoryPath = String.Empty;
+			// Target directory for the test environment
+			var testDirectoryPath = FileSystemTestUtilities.CreateRandomTestDirectory(); 
+
+			// Existing Test Environment Paths
+			var testEnvironmentPaths = MonitoringTestUtilities.GetTestEnvironment();
+
+			// Copies the test environment to the temporary directory for testing
+			MonitoringTestUtilities.CopyTestEnvironmentToTemp(testEnvironmentPaths, testDirectoryPath);
+
+			// Modifies the test environment to simulate changes for testing purposes
+			var filesChanged = MonitoringTestUtilities.ModifyTestEnvironment(testDirectoryPath, searchOption, fileCount);
+
+			// Path to the temporary test environment for scanning & the set of modified files for validation
+			return (testDirectoryPath, filesChanged); 
+		}
+		//Private methods constitute the internal class implementation and will not be tested.
+		//Scan method constitutes the majority of the class implementation and will be prioritized for testing over continuous monitoring.
+		[Fact]
+		public void Scan_DetectsChanges_RootBaselineFile()
+		{
+			var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+			var testDirectoryPath = String.Empty;
+			const SearchOption searchOption = SearchOption.TopDirectoryOnly;
 			try
 			{
-				testDirectoryPath = FileSystemTestUtilities.CreateRandomTestDirectory();
-				var testEnvironmentPaths = MonitoringTestUtilities.GetTestEnvironment();
-				var result = MonitoringTestUtilities.CopyTestEnvironmentToTemp(testEnvironmentPaths, testDirectoryPath);
+				var environment = CreateScanEnvironment(searchOption);
+				testDirectoryPath = environment.tempEnvPath;
+
+				var filesChanged = environment.modifiedFiles;
+
+				var scanResults = _baselineFileMonitor.Scan(testDirectoryPath, cts.Token)
+					.Select(r => r.Path)
+					.ToHashSet();
+				//Assert that the scan results contain the expected modified files
+				Assert.Equal(filesChanged, scanResults);
+			}
+			finally
+			{
+				DisposeTestEnvironment(testDirectoryPath);
+			}
+		}
+		[Fact]
+		public void Scan_DetectsChanges_RecursiveBaselineFile()
+		{
+			var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+			string testDirectoryPath = String.Empty;
+			const SearchOption searchOption = SearchOption.AllDirectories;
+			try
+			{
+				var environment = CreateScanEnvironment(searchOption);
+				testDirectoryPath = environment.tempEnvPath;
+
+				var filesChanged = environment.modifiedFiles;
+				
+				var scanResults = _baselineFileMonitor.Scan(testDirectoryPath, cts.Token)
+					.Select(r => r.Path)
+					.ToHashSet();
+				//Assert that the scan results contain the expected modified files
+				Assert.Equal(filesChanged, scanResults);
+
+
 			}
 			finally
 			{
