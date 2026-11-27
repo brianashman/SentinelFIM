@@ -1,66 +1,73 @@
-[
-  {
-    "FileName": "config.json",
-    "Path": ".\\config.json",
-    "Hash": "BAFA664992749CD475DE56FE04F528229E4F7FF0DB33ECE40218823F86438F4C",
-    "Algorithm": "sha256",
-    "FileSize": 55,
-    "CreatedAt": "2026-11-26T00:50:48.9150854Z"
+{
+  "Metadata": {
+    "OutputFormat": "json",
+    "CreatedAt": "2026-11-27T22:41:26.2602609Z",
+    "IsRecursive": true
   },
-  {
-    "FileName": "current-folderbaseline.json",
-    "Path": ".\\current-folderbaseline.json",
-    "Hash": "17940FAAD6C966C3B7033FB026F2406F82137D0806F9C7414BAEEAD5BDA5D8FD",
-    "Algorithm": "sha256",
-    "FileSize": 507,
-    "CreatedAt": "2026-11-26T00:50:48.9183885Z"
-  },
-  {
-    "FileName": "readme.txt",
-    "Path": ".\\readme.txt",
-    "Hash": "254E37C9BA6026763A4A363908615BF152F827537A705287F3B2E5F5E2145F19",
-    "Algorithm": "sha256",
-    "FileSize": 52,
-    "CreatedAt": "2026-11-26T00:50:48.9185118Z"
-  },
-  {
-    "FileName": "application.log",
-    "Path": ".\\Application Logs\\application.log",
-    "Hash": "94FDE837A29189FC5CCF5BA33664A6D7C9420357CBF8AE97CA317A6718D1C57A",
-    "Algorithm": "sha256",
-    "FileSize": 70,
-    "CreatedAt": "2026-11-26T00:50:48.9251813Z"
-  },
-  {
-    "FileName": "security.log",
-    "Path": ".\\Application Logs\\security.log",
-    "Hash": "B88F453A9B788F4AA15AE6ED6D1E7E829C8BE72F360B1C8E3E137748E38227A4",
-    "Algorithm": "sha256",
-    "FileSize": 25,
-    "CreatedAt": "2026-11-26T00:50:48.9297426Z"
-  },
-  {
-    "FileName": "notes.txt",
-    "Path": ".\\Documents\\notes.txt",
-    "Hash": "DEF8DAF11A8B885F1D3388D532C76FB73EF484E101D92FA8854B7CB74E802A00",
-    "Algorithm": "sha256",
-    "FileSize": 50,
-    "CreatedAt": "2026-11-26T00:50:48.9344496Z"
-  },
-  {
-    "FileName": "todo.txt",
-    "Path": ".\\Documents\\todo.txt",
-    "Hash": "4F7DF13607C5AC48545D9525003D4B71938898CB63EF881B874FE9531589B8A2",
-    "Algorithm": "sha256",
-    "FileSize": 58,
-    "CreatedAt": "2026-11-26T00:50:48.940083Z"
-  },
-  {
-    "FileName": "project-alpha.txt",
-    "Path": ".\\Documents\\Projects\\project-alpha.txt",
-    "Hash": "3B68C9D47347E569E1A1F096E3CFA3AD996577BC601685D022245B3BA81762A5",
-    "Algorithm": "sha256",
-    "FileSize": 52,
-    "CreatedAt": "2026-11-26T00:50:48.9457107Z"
-  }
-]
+  "Results": [
+    {
+      "FileName": "config.json",
+      "Path": ".\\config.json",
+      "Hash": "ECFA61436CC98605A5C27F0AE18D3325E69220C1D0B2AAAF24462DF2BA7CD388",
+      "Algorithm": "sha256",
+      "FileSize": 22,
+      "CreatedAt": "2026-11-27T22:41:26.2342601Z"
+    },
+    {
+      "FileName": "data.csv",
+      "Path": ".\\data.csv",
+      "Hash": "885239E6530141464DB4306AC2888A4C34C3E0F3DF8A4518045B6B792FB939F9",
+      "Algorithm": "sha256",
+      "FileSize": 13,
+      "CreatedAt": "2026-11-27T22:41:26.2375275Z"
+    },
+    {
+      "FileName": "readme.txt",
+      "Path": ".\\readme.txt",
+      "Hash": "994073428541C86327D6CBF043A375EA105D32A1D4425B2E2950D5DFF5E9E4FF",
+      "Algorithm": "sha256",
+      "FileSize": 53,
+      "CreatedAt": "2026-11-27T22:41:26.2376475Z"
+    },
+    {
+      "FileName": "application.log",
+      "Path": ".\\Application Logs\\application.log",
+      "Hash": "94FDE837A29189FC5CCF5BA33664A6D7C9420357CBF8AE97CA317A6718D1C57A",
+      "Algorithm": "sha256",
+      "FileSize": 70,
+      "CreatedAt": "2026-11-27T22:41:26.2420532Z"
+    },
+    {
+      "FileName": "security.log",
+      "Path": ".\\Application Logs\\security.log",
+      "Hash": "B88F453A9B788F4AA15AE6ED6D1E7E829C8BE72F360B1C8E3E137748E38227A4",
+      "Algorithm": "sha256",
+      "FileSize": 25,
+      "CreatedAt": "2026-11-27T22:41:26.2449304Z"
+    },
+    {
+      "FileName": "notes.txt",
+      "Path": ".\\Documents\\notes.txt",
+      "Hash": "B0DD8D368860CC5C4BEAC8D2ED77CC64A7E1EF7A0153C9DBF6CCCE57381AC9E3",
+      "Algorithm": "sha256",
+      "FileSize": 51,
+      "CreatedAt": "2026-11-27T22:41:26.2481077Z"
+    },
+    {
+      "FileName": "todo.txt",
+      "Path": ".\\Documents\\todo.txt",
+      "Hash": "5719BE551AC5BB50DC1168359DD070B2C57D60F108D4821B23167D81936316FB",
+      "Algorithm": "sha256",
+      "FileSize": 60,
+      "CreatedAt": "2026-11-27T22:41:26.2533432Z"
+    },
+    {
+      "FileName": "project-alpha.txt",
+      "Path": ".\\Documents\\Projects\\project-alpha.txt",
+      "Hash": "3B68C9D47347E569E1A1F096E3CFA3AD996577BC601685D022245B3BA81762A5",
+      "Algorithm": "sha256",
+      "FileSize": 52,
+      "CreatedAt": "2026-11-27T22:41:26.2596075Z"
+    }
+  ]
+}
