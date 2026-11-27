@@ -8,9 +8,9 @@ Rather than being designed as a single-purpose utility, SentinelFIM is built as 
 
 ---
 
-## Features
+# Features
 
-### Integrity Monitoring
+## Integrity Monitoring
 
 - Cryptographic file integrity verification
 - Baseline generation and persistence
@@ -22,17 +22,25 @@ Rather than being designed as a single-purpose utility, SentinelFIM is built as 
 - Monitoring status events and lifecycle notifications
 - Cancellation-aware long-running monitoring operations
 
-### Architecture & Extensibility
+## Baseline Management
+
+- JSON baseline persistence
+- Baseline document metadata support
+- Recursive and non-recursive baseline generation
+- Absolute path normalization
+- Baseline loading and validation
+
+## Architecture & Extensibility
 
 - Layered architecture
 - Dependency injection throughout the application
 - Provider-based hashing architecture
 - Swappable monitoring implementations
 - Implementation-independent monitoring abstractions
-- Separation of presentation, domain, and infrastructure concerns
-- Cross-platform .NET design
+- Separation of presentation, application, domain, and infrastructure concerns
+- Cross-platform .NET architecture
 
-### Platform Support
+## Platform Support
 
 - Command-Line Interface (CLI)
 - Cross-platform architecture
@@ -40,50 +48,69 @@ Rather than being designed as a single-purpose utility, SentinelFIM is built as 
 
 ---
 
-## Architecture
+# Architecture
 
 <table>
+
 <tr>
+
 <td align="center">
+
 <img src="docs/Excalidraw/architecture.svg" width="500">
+
 <br>
+
 <b>Core Layout</b>
+
 </td>
 
 <td align="center">
+
 <img src="docs/Mermaid/SentinelFIMLayeredArchitecture.svg" width="500">
+
 <br>
+
 <b>Solution Architecture</b>
+
 </td>
+
 </tr>
+
 </table>
 
 The editable source for the Excalidraw diagram can be found in:
 
-`docs/Excalidraw/SentinelFIM.excalidraw`
+```text
+docs/Excalidraw/SentinelFIM.excalidraw
+```
 
 The editable source for the Mermaid diagram can be found in:
 
-`docs/Mermaid/SentinelFIMLayeredArchitecture.mmd`
+```text
+docs/Mermaid/SentinelFIMLayeredArchitecture.mmd
+```
 
-SentinelFIM follows a layered architecture that separates integrity monitoring, hashing, persistence, reporting, and presentation concerns into independent components.
+SentinelFIM follows a layered architecture that separates monitoring, hashing, persistence, reporting, and presentation concerns into independent components.
 
 The core application logic remains implementation-agnostic while infrastructure components provide monitoring, hashing, storage, and future reporting capabilities through interchangeable implementations.
 
-This architecture enables long-term growth while maintaining clear separation of concerns and supporting future monitoring technologies, hashing algorithms, export formats, and user interfaces.
+This architecture enables long-term growth while maintaining clear separation of concerns and supporting future monitoring technologies, hashing algorithms, export formats, storage providers, and user interfaces.
 
 Additional architectural information can be found in:
 
-`docs/architecture-overview.md`
+```text
+docs/architecture-overview.md
+```
 
 ---
 
-## Current Capabilities
+# Current Capabilities
 
 SentinelFIM currently supports:
 
 - Baseline generation
-- Baseline persistence and loading
+- JSON baseline persistence and loading
+- Baseline metadata support
 - One-time integrity scans
 - Continuous integrity monitoring
 - Hash change detection
@@ -92,45 +119,58 @@ SentinelFIM currently supports:
 - Recursive directory scanning
 - Polling-based monitoring
 - Monitoring status notifications
+- Integration-tested monitoring workflows
 
 ---
 
-## Planned Enhancements
+# Planned Enhancements
 
-### Monitoring
+## Cloud & Storage
+
+- Azure Blob Storage support
+- Azure-based baseline storage
+- Additional persistence providers
+- Encrypted baseline storage
+
+## Monitoring
 
 - In-memory monitoring mode
 - Event-driven monitoring implementations
 - Additional monitoring providers
 - Monitoring implementation factory
 
-### Reporting
+## Reporting
 
-- JSON export support
-- CSV export support
-- XML export support
-- Additional export providers
+- JSON report exporting
+- CSV report exporting
+- XML report exporting
+- Extensible export provider model
 
-### User Experience
+## User Experience
 
 - Desktop GUI
 - Enhanced monitoring views
 - Alert management improvements
+- Improved configuration management
 
-### Quality & Testing
+## Quality & Testing
 
-- Automated Integration Testing
+- CI/CD pipeline
+- Automated build validation
+- Expanded integration test coverage
+- Functional testing suite
 - Native AOT evaluation
 
 ---
 
-## Technical Highlights
+# Technical Highlights
 
 - C#
 - .NET
 - Layered Architecture
 - Dependency Injection
 - Cryptographic Hash Verification
+- Integration Testing
 - Iterator-Based Monitoring Pipelines
 - Event-Driven Status Notifications
 - CancellationToken Support
@@ -139,32 +179,46 @@ SentinelFIM currently supports:
 
 ---
 
-## Status
+# Project Highlights
+
+- Cross-platform File Integrity Monitoring platform
+- Extensible provider-based architecture
+- Integration-tested monitoring workflows
+- Cryptographic file verification using SHA-256
+- Active development with 100+ commits approaching v1.0
+
+---
+
+# Status
 
 **Version:** 0.9.0
 
 SentinelFIM is an actively developed security and systems engineering project focused on file integrity monitoring, tamper detection, and extensible monitoring architectures.
 
-The current release focuses on delivering a complete command-line monitoring experience while future versions will expand monitoring capabilities, reporting options, testing coverage, and user interfaces.
+The current release focuses on delivering a complete command-line monitoring experience while future releases will expand cloud integration, monitoring capabilities, reporting options, automated testing coverage, and user interfaces.
 
 ---
 
-## Development Notes
+# Development Notes
 
 The architecture, application logic, and first-party source code for this project were designed and implemented manually.
 
-AI was used as a learning resource for conceptual explanations, architecture discussions, debugging assistance, GitHub issue generation, and documentation support.
+AI was used as a learning resource for conceptual explanations, architecture discussions, debugging assistance, documentation support, and technical research.
+
+All architectural decisions, implementations, testing strategies, and final code remain developer-directed.
 
 ---
 
-## Design Decisions
+# Design Decisions
 
 Detailed architectural decisions can be found in:
 
-`docs/design-decisions.md`
+```text
+docs/design-decisions.md
+```
 
 ---
 
-## License
+# License
 
 MIT License
