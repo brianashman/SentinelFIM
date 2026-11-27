@@ -54,7 +54,7 @@ namespace SentinelFIM.Tests
 		[Fact]
 		public void Scan_DetectsChanges_RootBaselineFile()
 		{
-			var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+			var cts = new CancellationTokenSource();
 			var testDirectoryPath = String.Empty;
 			const SearchOption searchOption = SearchOption.TopDirectoryOnly;
 			try

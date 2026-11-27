@@ -1,5 +1,6 @@
 ﻿namespace SentinelFIM.Tests.Shared
 {
+	//Reminder to add the cts timeout for tests
 	public static class MonitoringTestUtilities
 	{
 		//Fixture is set in SentinelFIM.Tests.csproj to copy the Test Environment directory relative to the executable path
