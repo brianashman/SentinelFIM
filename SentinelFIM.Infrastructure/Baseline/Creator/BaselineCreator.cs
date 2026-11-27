@@ -43,7 +43,7 @@ namespace SentinelFIM.Infrastructure.Baseline.Creator
 			return new ScanResult
 			{
 				FileName = info.Name,
-				Path = path,
+				Path = Path.GetFullPath(path),
 				Algorithm = _hashProvider.Algorithm,
 				FileSize = info.Length,
 				Hash = _hashProvider.ComputeHash(stream)
