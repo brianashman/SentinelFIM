@@ -1,73 +1,73 @@
 {
   "Metadata": {
     "OutputFormat": "json",
-    "CreatedAt": "2026-11-27T22:41:26.2602609Z",
+    "CreatedAt": "2026-11-27T22:47:45.4021299Z",
     "IsRecursive": true
   },
   "Results": [
     {
       "FileName": "config.json",
-      "Path": ".\\config.json",
+      "Path": "C:\\Users\\beash\\source\\repos\\SentinelFIM\\SentinelFIM.Tests\\Test Environment\\config.json",
       "Hash": "ECFA61436CC98605A5C27F0AE18D3325E69220C1D0B2AAAF24462DF2BA7CD388",
       "Algorithm": "sha256",
       "FileSize": 22,
-      "CreatedAt": "2026-11-27T22:41:26.2342601Z"
+      "CreatedAt": "2026-11-27T22:47:45.3975457Z"
     },
     {
       "FileName": "data.csv",
-      "Path": ".\\data.csv",
+      "Path": "C:\\Users\\beash\\source\\repos\\SentinelFIM\\SentinelFIM.Tests\\Test Environment\\data.csv",
       "Hash": "885239E6530141464DB4306AC2888A4C34C3E0F3DF8A4518045B6B792FB939F9",
       "Algorithm": "sha256",
       "FileSize": 13,
-      "CreatedAt": "2026-11-27T22:41:26.2375275Z"
+      "CreatedAt": "2026-11-27T22:47:45.4008425Z"
     },
     {
       "FileName": "readme.txt",
-      "Path": ".\\readme.txt",
+      "Path": "C:\\Users\\beash\\source\\repos\\SentinelFIM\\SentinelFIM.Tests\\Test Environment\\readme.txt",
       "Hash": "994073428541C86327D6CBF043A375EA105D32A1D4425B2E2950D5DFF5E9E4FF",
       "Algorithm": "sha256",
       "FileSize": 53,
-      "CreatedAt": "2026-11-27T22:41:26.2376475Z"
+      "CreatedAt": "2026-11-27T22:47:45.4009863Z"
     },
     {
       "FileName": "application.log",
-      "Path": ".\\Application Logs\\application.log",
+      "Path": "C:\\Users\\beash\\source\\repos\\SentinelFIM\\SentinelFIM.Tests\\Test Environment\\Application Logs\\application.log",
       "Hash": "94FDE837A29189FC5CCF5BA33664A6D7C9420357CBF8AE97CA317A6718D1C57A",
       "Algorithm": "sha256",
       "FileSize": 70,
-      "CreatedAt": "2026-11-27T22:41:26.2420532Z"
+      "CreatedAt": "2026-11-27T22:47:45.4012226Z"
     },
     {
       "FileName": "security.log",
-      "Path": ".\\Application Logs\\security.log",
+      "Path": "C:\\Users\\beash\\source\\repos\\SentinelFIM\\SentinelFIM.Tests\\Test Environment\\Application Logs\\security.log",
       "Hash": "B88F453A9B788F4AA15AE6ED6D1E7E829C8BE72F360B1C8E3E137748E38227A4",
       "Algorithm": "sha256",
       "FileSize": 25,
-      "CreatedAt": "2026-11-27T22:41:26.2449304Z"
+      "CreatedAt": "2026-11-27T22:47:45.4012904Z"
     },
     {
       "FileName": "notes.txt",
-      "Path": ".\\Documents\\notes.txt",
+      "Path": "C:\\Users\\beash\\source\\repos\\SentinelFIM\\SentinelFIM.Tests\\Test Environment\\Documents\\notes.txt",
       "Hash": "B0DD8D368860CC5C4BEAC8D2ED77CC64A7E1EF7A0153C9DBF6CCCE57381AC9E3",
       "Algorithm": "sha256",
       "FileSize": 51,
-      "CreatedAt": "2026-11-27T22:41:26.2481077Z"
+      "CreatedAt": "2026-11-27T22:47:45.4015896Z"
     },
     {
       "FileName": "todo.txt",
-      "Path": ".\\Documents\\todo.txt",
+      "Path": "C:\\Users\\beash\\source\\repos\\SentinelFIM\\SentinelFIM.Tests\\Test Environment\\Documents\\todo.txt",
       "Hash": "5719BE551AC5BB50DC1168359DD070B2C57D60F108D4821B23167D81936316FB",
       "Algorithm": "sha256",
       "FileSize": 60,
-      "CreatedAt": "2026-11-27T22:41:26.2533432Z"
+      "CreatedAt": "2026-11-27T22:47:45.4016594Z"
     },
     {
       "FileName": "project-alpha.txt",
-      "Path": ".\\Documents\\Projects\\project-alpha.txt",
+      "Path": "C:\\Users\\beash\\source\\repos\\SentinelFIM\\SentinelFIM.Tests\\Test Environment\\Documents\\Projects\\project-alpha.txt",
       "Hash": "3B68C9D47347E569E1A1F096E3CFA3AD996577BC601685D022245B3BA81762A5",
       "Algorithm": "sha256",
       "FileSize": 52,
-      "CreatedAt": "2026-11-27T22:41:26.2596075Z"
+      "CreatedAt": "2026-11-27T22:47:45.4017644Z"
     }
   ]
 }
