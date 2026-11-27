@@ -153,7 +153,7 @@ The current release focuses on delivering a complete command-line monitoring exp
 
 The architecture, application logic, and first-party source code for this project were designed and implemented manually.
 
-AI was used as a learning resource for conceptual explanations, architecture discussions, debugging assistance, and documentation support.
+AI was used as a learning resource for conceptual explanations, architecture discussions, debugging assistance, GitHub issue generation, and documentation support.
 
 ---
 
