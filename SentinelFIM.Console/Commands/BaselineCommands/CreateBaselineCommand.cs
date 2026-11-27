@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using SentinelFIM.Console.Commands.BaselineCommands.Settings;
 using SentinelFIM.Core.Baseline;
 using SentinelFIM.Core.Models;
+using SentinelFIM.Core.Models.Baseline;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System.Diagnostics;

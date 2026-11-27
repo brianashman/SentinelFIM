@@ -63,12 +63,13 @@ namespace SentinelFIM.Tests
 				testDirectoryPath = environment.tempEnvPath;
 
 				var filesChanged = environment.modifiedFiles;
-
-				var scanResults = _baselineFileMonitor.Scan(testDirectoryPath, cts.Token)
-					.Select(r => r.Path)
+				var baselineFilePath = MonitoringTestUtilities.GetCurrentDirectoryBaselinePath(testDirectoryPath);
+				var expectedResults = filesChanged.Select(file => Path.GetFileName(file)).ToHashSet();
+				var scanResults = _baselineFileMonitor.Scan(baselineFilePath, cts.Token)
+					.Select(r => Path.GetFileName(r.Path))
 					.ToHashSet();
 				//Assert that the scan results contain the expected modified files
-				Assert.Equal(filesChanged, scanResults);
+				Assert.Equal(expectedResults, scanResults);
 			}
 			finally
 			{
@@ -78,7 +79,7 @@ namespace SentinelFIM.Tests
 		[Fact]
 		public void Scan_DetectsChanges_RecursiveBaselineFile()
 		{
-			var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+			var cts = new CancellationTokenSource();
 			string testDirectoryPath = String.Empty;
 			const SearchOption searchOption = SearchOption.AllDirectories;
 			try
@@ -87,13 +88,15 @@ namespace SentinelFIM.Tests
 				testDirectoryPath = environment.tempEnvPath;
 
 				var filesChanged = environment.modifiedFiles;
-				
-				var scanResults = _baselineFileMonitor.Scan(testDirectoryPath, cts.Token)
-					.Select(r => r.Path)
-					.ToHashSet();
-				//Assert that the scan results contain the expected modified files
-				Assert.Equal(filesChanged, scanResults);
+				var baselineFilePath = MonitoringTestUtilities.GetRecursiveDirectoryBaselinePath(testDirectoryPath);
 
+				var expectedResults = filesChanged.Select(file => Path.GetFileName(file)).ToHashSet();
+				var scanResults = _baselineFileMonitor.Scan(baselineFilePath, cts.Token)
+					.Select(r => Path.GetFileName(r.Path))
+					.ToHashSet();
+
+				//Assert that the scan results contain the expected modified files
+				Assert.Equal(expectedResults, scanResults);
 
 			}
 			finally

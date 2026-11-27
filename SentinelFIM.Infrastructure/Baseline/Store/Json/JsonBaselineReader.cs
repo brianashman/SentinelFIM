@@ -2,6 +2,7 @@
 using SentinelFIM.Core.Baseline;
 using SentinelFIM.Core.Identifiers;
 using SentinelFIM.Core.Models;
+using SentinelFIM.Core.Models.Baseline;
 using SentinelFIM.Infrastructure.Baseline.Creator;
 using System.Diagnostics;
 using System.Text.Json;
@@ -20,7 +21,7 @@ namespace SentinelFIM.Infrastructure.Baseline.Store.Json
 			_logger = logger;
 		}
 
-		public IEnumerable<ScanResult> LoadBaseline(string path)
+		public BaselineDocument LoadBaseline(string path)
 		{
 			FileInfo baseline = new FileInfo(path);
 
@@ -36,7 +37,7 @@ namespace SentinelFIM.Infrastructure.Baseline.Store.Json
 
 			_logger.LogInformation("Loading baseline from file: {Path}", path);
 			using var stream = baseline.OpenRead();
-			var scanResults = JsonSerializer.Deserialize<IEnumerable<ScanResult>>(
+			var scanResults = JsonSerializer.Deserialize<BaselineDocument>(
 				stream, 
 				serializerOptions
 				);

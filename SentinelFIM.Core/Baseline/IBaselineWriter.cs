@@ -1,4 +1,4 @@
-﻿using SentinelFIM.Core.Models;
+﻿using SentinelFIM.Core.Models.Baseline;
 using System;
 using System.Collections.Generic;
 using System.Text;

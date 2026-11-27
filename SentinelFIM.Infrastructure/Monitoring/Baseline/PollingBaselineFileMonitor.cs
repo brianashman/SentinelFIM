@@ -50,7 +50,7 @@ namespace SentinelFIM.Infrastructure.Monitoring.Baseline
 			_logger.LogInformation("Loading baseline from file: {Path}", path);
 			_inMemoryBaseline.Clear();
 			var results = _baselineReader.LoadBaseline(path);
-			foreach (var item in results)
+			foreach (var item in results.Results)
 			{
 				_inMemoryBaseline.Add(item.Path, item);
 			}

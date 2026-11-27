@@ -2,6 +2,7 @@
 using SentinelFIM.Core.Baseline;
 using SentinelFIM.Core.Identifiers;
 using SentinelFIM.Core.Models;
+using SentinelFIM.Core.Models.Baseline;
 using SentinelFIM.Infrastructure.Baseline.Creator;
 using System;
 using System.Collections.Generic;
@@ -11,12 +12,13 @@ using System.Text.Json;
 
 namespace SentinelFIM.Infrastructure.Baseline.Store.Json
 {
+	//Add algorithm support to the baseline metadata after factory pattern is implemented for baseline creation
 	public class JsonBaselineWriter : IBaselineWriter
 	{
 		public string Format => OutputFormat.Json;
-		private readonly ILogger<JsonBaselineReader> _logger;
+		private readonly ILogger<JsonBaselineWriter> _logger;
 		private readonly BaselineCreator _baselineCreator;
-		public JsonBaselineWriter(ILogger<JsonBaselineReader> logger, BaselineCreator baselineCreator)
+		public JsonBaselineWriter(ILogger<JsonBaselineWriter> logger, BaselineCreator baselineCreator)
 		{
 			_logger = logger;
 			_baselineCreator = baselineCreator;
@@ -58,8 +60,15 @@ namespace SentinelFIM.Infrastructure.Baseline.Store.Json
 					PropertyNameCaseInsensitive = true,
 					WriteIndented = true
 				};
+				var metadata = new BaselineMetadata(
+					OutputFormat: this.Format,
+					IsRecursive: isRecursive,
+					CreatedAt: DateTime.UtcNow
+				);
+				BaselineDocument document = new BaselineDocument(metadata, baseline.AsReadOnly());
+
 				using FileStream fileStream = new(createdOutputFile, FileMode.Create, FileAccess.Write);
-				JsonSerializer.Serialize(fileStream, baseline, serializerOptions);
+				JsonSerializer.Serialize(fileStream, document, serializerOptions);
 				timer.Stop();
 			}
 			catch (Exception)

@@ -1,6 +1,7 @@
 ﻿using SentinelFIM.Core.Baseline;
 using SentinelFIM.Core.Identifiers;
 using SentinelFIM.Core.Models;
+using SentinelFIM.Core.Models.Baseline;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -23,7 +24,7 @@ namespace SentinelFIM.Infrastructure.Baseline.Store.Json
 			_baselineWriter = baselineWriter;
 		}	
 
-		public IEnumerable<ScanResult> LoadBaseline(string path)
+		public BaselineDocument LoadBaseline(string path)
 		{
 			return _baselineReader.LoadBaseline(path);
 		}
