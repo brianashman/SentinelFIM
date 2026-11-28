@@ -205,7 +205,9 @@ The architecture, application logic, and first-party source code for this projec
 
 AI was used as a learning resource for conceptual explanations, architecture discussions, debugging assistance, documentation support, and technical research.
 
-All architectural decisions, implementations, testing strategies, and final code remain developer-directed.
+GitHub Copilot autocomplete was occasionally used to generate repetitive code patterns, boilerplate code, and small implementation snippets based on existing project code. AI was not used to generate complete application features, architectural designs, or significant portions of project logic.
+
+All architectural decisions, implementations, testing strategies, and final code remain developer-directed and manually reviewed before inclusion in the project.
 
 ---
 
