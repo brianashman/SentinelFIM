@@ -123,27 +123,62 @@ The monitoring workflow is:
 
 ```text
 Files & Directories
-          ↓
-  Baseline Generation
-          ↓
-   Baseline Storage
-          ↓
-  Continuous Monitoring
-          ↓
+
+ ↓
+
+ Baseline Generation
+
+ ↓
+
+ Baseline Document Creation
+
+ ↓
+
+ Baseline Storage
+
+ ↓
+
+ Continuous Monitoring
+
+ ↓
+
  Integrity Verification
-          ↓
-    Alert Generation
+
+ ↓
+
+ Alert Generation
 ```
 
 The baseline acts as the source of truth.
 
 Rather than comparing files against previous scans, monitored files are continuously evaluated against stored baseline data to detect integrity violations.
 
+Baseline data is stored using a document-oriented model that separates metadata from scan results.
+
+```csharp
+public record BaselineDocument(
+    BaselineMetadata Metadata,
+    IReadOnlyCollection<ScanResult> Results);
+```
+
+Metadata provides contextual information about the baseline while scan results contain the integrity information used during monitoring.
+
+Examples of metadata include:
+
+- Output format
+- Recursive scan settings
+- Baseline creation timestamp
+- Future version information
+- Future encryption status
+
+This document-based approach allows SentinelFIM's baseline format to evolve without requiring changes to monitoring implementations or storage abstractions.
+
 Current capabilities include:
 
 - Baseline generation
 - Baseline persistence
 - Baseline loading
+- Baseline metadata support
 - One-time integrity scans
 - Continuous integrity monitoring
 - Recursive directory scanning
@@ -152,7 +187,8 @@ Current capabilities include:
 - File deletion detection
 - Monitoring status notifications
 
----
+Future versions may introduce explicit baseline format versioning to support backward compatibility as the baseline schema evolves.
+
 
 # Extensibility
 
