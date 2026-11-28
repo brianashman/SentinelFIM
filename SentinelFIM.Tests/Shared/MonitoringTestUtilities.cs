@@ -121,7 +121,7 @@ namespace SentinelFIM.Tests.Shared
 		}
 
 		public static (string tempEnvPath, HashSet<string> modifiedFiles) CreateTestEnvironment(SearchOption searchOption,
-			BaselineCreationOption baselineCreationOption,
+			BaselineCreationOption baselineCreationOption, TestOperation testOperation,
 			CancellationToken cancellationToken, int fileCount = 3)
 		{
 			// Target directory for the test environment
@@ -146,11 +146,19 @@ namespace SentinelFIM.Tests.Shared
 					BaselineTestUtilities.CreateAllBaselinesAtPath(testDirectoryPath, cancellationToken);
 					break;
 			}
-			
 
 
 			// Modifies the test environment to simulate changes for testing purposes
-			var filesChanged = MonitoringTestUtilities.ModifyTestEnvironment(testDirectoryPath, searchOption, fileCount);
+			HashSet<string> filesChanged = [];
+			switch (testOperation)
+			{
+				case TestOperation.Modify:
+					filesChanged = MonitoringTestUtilities.ModifyTestEnvironment(testDirectoryPath, searchOption, fileCount);
+					break;
+				case TestOperation.Delete:
+					filesChanged = MonitoringTestUtilities.DeleteFilesFromTestEnvironment(testDirectoryPath, searchOption, fileCount);
+					break;
+			}
 
 			// Path to the temporary test environment for scanning & the set of modified files for validation
 			return (testDirectoryPath, filesChanged);

@@ -33,22 +33,20 @@ namespace SentinelFIM.Tests
 			_baselineFileMonitor = new PollingBaselineFileMonitor(_monitorLoggerMock.Object, _hashProvider, _baselineReader);
 		}
 
-
 		private void DisposeTestEnvironment(string directory) => FileSystemTestUtilities.DeleteTestDirectoryRecursive(directory);
 
 		//Private methods for PollingBaselineFileMonitor constitute the internal class implementation and will not be tested.
-		//Scan method constitutes the majority of the class implementation and will be prioritized for testing over continuous monitoring.
 		//Each method has its own cts and test directories to ensure isolation and avoid interference between tests.
 		
 		[Fact]
 		public void Scan_DetectsModifications_RootBaselineFile()
 		{
-			var cts = new CancellationTokenSource(_timeout);
+			using var cts = new CancellationTokenSource(_timeout);
 			var testDirectoryPath = String.Empty;
 			const SearchOption searchOption = SearchOption.TopDirectoryOnly;
 			try
 			{
-				var environment = MonitoringTestUtilities.CreateTestEnvironment(searchOption, BaselineCreationOption.RootOnly, cts.Token);
+				var environment = MonitoringTestUtilities.CreateTestEnvironment(searchOption, BaselineCreationOption.RootOnly, TestOperation.Modify, cts.Token);
 				testDirectoryPath = environment.tempEnvPath;
 
 				var filesChanged = environment.modifiedFiles;
@@ -70,12 +68,12 @@ namespace SentinelFIM.Tests
 		[Fact]
 		public void Scan_DetectsModifications_RecursiveBaselineFile()
 		{
-			var cts = new CancellationTokenSource(_timeout);
+			using var cts = new CancellationTokenSource(_timeout);
 			string testDirectoryPath = String.Empty;
 			const SearchOption searchOption = SearchOption.AllDirectories;
 			try
 			{
-				var environment = MonitoringTestUtilities.CreateTestEnvironment(searchOption, BaselineCreationOption.RecursiveOnly, cts.Token);
+				var environment = MonitoringTestUtilities.CreateTestEnvironment(searchOption, BaselineCreationOption.RecursiveOnly, TestOperation.Modify, cts.Token);
 				testDirectoryPath = environment.tempEnvPath;
 
 				var filesChanged = environment.modifiedFiles;
@@ -98,22 +96,20 @@ namespace SentinelFIM.Tests
 		[Fact]
 		public void Scan_DetectsDeletions_RootBaselineFile()
 		{
-			var cts = new CancellationTokenSource(_timeout);
+			using var cts = new CancellationTokenSource(_timeout);
 			var testDirectoryPath = String.Empty;
 			const SearchOption searchOption = SearchOption.TopDirectoryOnly;
 			try
 			{
-				var environment = MonitoringTestUtilities.CreateTestEnvironment(searchOption, BaselineCreationOption.RootOnly, cts.Token);
+				var environment = MonitoringTestUtilities.CreateTestEnvironment(searchOption, BaselineCreationOption.RootOnly, TestOperation.Delete, cts.Token);
 				
 				testDirectoryPath = environment.tempEnvPath;
 				var filesChanged = environment.modifiedFiles;
 
 				var baselineFilePath = MonitoringTestUtilities.GetCurrentDirectoryBaselinePath(testDirectoryPath);
-				//Delete the modified files to simulate deletions
-				foreach (var file in filesChanged)
-				{
-					File.Delete(file);
-				}
+				
+
+
 				var expectedResults = filesChanged.Select(file => Path.GetFileName(file)).ToHashSet();
 				var scanResults = _baselineFileMonitor.Scan(baselineFilePath, cts.Token)
 					.Select(r => Path.GetFileName(r.Path))
@@ -129,22 +125,18 @@ namespace SentinelFIM.Tests
 		[Fact]
 		public void Scan_DetectsDeletions_RecursiveBaselineFile()
 		{
-			var cts = new CancellationTokenSource(_timeout);
+			using var cts = new CancellationTokenSource(_timeout);
 			var testDirectoryPath = String.Empty;
 			const SearchOption searchOption = SearchOption.AllDirectories;
 			try
 			{
-				var environment = MonitoringTestUtilities.CreateTestEnvironment(searchOption, BaselineCreationOption.RecursiveOnly, cts.Token);
+				var environment = MonitoringTestUtilities.CreateTestEnvironment(searchOption, BaselineCreationOption.RecursiveOnly, TestOperation.Delete, cts.Token);
 
 				testDirectoryPath = environment.tempEnvPath;
 				var filesChanged = environment.modifiedFiles;
 
 				var baselineFilePath = MonitoringTestUtilities.GetRecursiveDirectoryBaselinePath(testDirectoryPath);
-				//Delete the modified files to simulate deletions
-				foreach (var file in filesChanged)
-				{
-					File.Delete(file);
-				}
+
 				var expectedResults = filesChanged.Select(file => Path.GetFileName(file)).ToHashSet();
 				var scanResults = _baselineFileMonitor.Scan(baselineFilePath, cts.Token)
 					.Select(r => Path.GetFileName(r.Path))
@@ -161,7 +153,7 @@ namespace SentinelFIM.Tests
 		[Fact]
 		public void Scan_ThrowsException_WhenBaselineFileDoesNotExist()
 		{
-			var cts = new CancellationTokenSource(_timeout);
+			using var cts = new CancellationTokenSource(_timeout);
 			var testDirectoryPath = String.Empty;
 			try
 			{
@@ -180,7 +172,7 @@ namespace SentinelFIM.Tests
 		[Fact]
 		public void Scan_ThrowsException_WhenBaselineFileIsInvalid()
 		{
-			var cts = new CancellationTokenSource(_timeout);
+			using var cts = new CancellationTokenSource(_timeout);
 			var testDirectoryPath = String.Empty;
 			try
 			{
@@ -198,7 +190,7 @@ namespace SentinelFIM.Tests
 		[Fact]
 		public void Scan_ThrowsException_WhenBaselineFileIsEmpty()
 		{
-			var cts = new CancellationTokenSource(_timeout);
+			using var cts = new CancellationTokenSource(_timeout);
 			var testDirectoryPath = String.Empty;
 			try
 			{
@@ -217,7 +209,7 @@ namespace SentinelFIM.Tests
 		[Fact]
 		public void Scan_ThrowsException_WhenCancellationIsRequested()
 		{
-			var cts = new CancellationTokenSource();
+			using var cts = new CancellationTokenSource();
 			var testDirectoryPath = String.Empty;
 			try
 			{
