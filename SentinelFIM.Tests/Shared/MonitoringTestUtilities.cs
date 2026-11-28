@@ -74,6 +74,31 @@ namespace SentinelFIM.Tests.Shared
 			}
 			return filesToModify;
 		}
+		public static HashSet<string> DeleteFilesFromTestEnvironment(string testEnvironment, SearchOption searchOption, int fileCount = 3)
+		{
+			var random = new Random();
+			string[] testFiles = Directory.GetFiles(testEnvironment, "*", searchOption).Where(file => !Path.GetFileName(file).Contains("baseline", StringComparison.OrdinalIgnoreCase)).ToArray();
+			int testFileCount = testFiles.Length;
+			if (testFileCount <= 0) throw new InvalidOperationException("No files available for deletion in the test environment.");
+
+
+			int deletionCount = random.Next(1, fileCount + 1); // Randomly choose how many files to delete (between 1 and fileCount)
+			if(deletionCount > testFileCount) deletionCount = testFileCount; // Ensure more files are not deleted than exist
+
+			HashSet<string> filesToDelete = new HashSet<string>();
+
+			for (int i = 0; i < deletionCount; i++)
+			{
+				int fileIndex = random.Next(testFileCount);
+				if (filesToDelete.Add(testFiles[fileIndex]))
+				{
+					File.Delete(testFiles[fileIndex]);
+				}
+				else i--;
+			}
+			return filesToDelete;
+		}
+
 		public static string GetCurrentDirectoryBaselinePath(string directory)
 		{
 			if (!Directory.Exists(directory)) throw new InvalidOperationException("The specified directory does not exist.");
@@ -94,6 +119,7 @@ namespace SentinelFIM.Tests.Shared
 			&& Path.GetFileName(path).StartsWith("all", StringComparison.OrdinalIgnoreCase));
 			return result ?? throw new InvalidOperationException("No recursive baseline file found in the specified directory.");
 		}
+
 		public static (string tempEnvPath, HashSet<string> modifiedFiles) CreateTestEnvironment(SearchOption searchOption,
 			BaselineCreationOption baselineCreationOption,
 			CancellationToken cancellationToken, int fileCount = 3)

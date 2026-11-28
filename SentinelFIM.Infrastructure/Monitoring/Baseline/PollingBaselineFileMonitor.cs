@@ -147,6 +147,7 @@ namespace SentinelFIM.Infrastructure.Monitoring.Baseline
 		}
 		public IEnumerable<MonitoringAlert> Scan(string path, CancellationToken cancellationToken)
 		{
+			cancellationToken.ThrowIfCancellationRequested();
 			//Load the Baseline if it has not been loaded yet.
 			if (baselinePath != path)
 			{
@@ -168,15 +169,17 @@ namespace SentinelFIM.Infrastructure.Monitoring.Baseline
 		}
 		public IEnumerable<MonitoringAlert> Monitor(string path, int? intervalSeconds, CancellationToken cancellationToken)
 		{
-			StatusChanged?.Invoke(this, new MonitoringStatus(
+			var monitoringTimer = Stopwatch.StartNew();
+			try
+			{
+				StatusChanged?.Invoke(this, new MonitoringStatus(
 					MonitoringStatusType.Started,
 					$"Continuous monitoring in progress for baseline file: {path}",
 					DateTime.UtcNow
 				));
-			_logger.LogInformation("Continuous monitoring started for baseline file: {Path}", path);
-			var monitoringTimer = Stopwatch.StartNew();
-			try
-			{
+				_logger.LogInformation("Continuous monitoring started for baseline file: {Path}", path);
+
+				cancellationToken.ThrowIfCancellationRequested();
 				while (!cancellationToken.IsCancellationRequested)
 				{
 					var intervalTimer = Stopwatch.StartNew();
