@@ -8,5 +8,6 @@ namespace SentinelFIM.Tests.Models
 	{
 		Modify,
 		Delete,
+		None,
 	}
 }

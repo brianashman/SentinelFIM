@@ -1,4 +1,5 @@
 ﻿using SentinelFIM.Tests.Models;
+using System.Diagnostics;
 
 namespace SentinelFIM.Tests.Shared
 {
@@ -50,15 +51,17 @@ namespace SentinelFIM.Tests.Shared
 			CopyContents();
 		}
 		// Not meant to be truly random, but to simulate changes in the test environment for testing purposes.
-		public static HashSet<string> ModifyTestEnvironment(string testEnvironment, SearchOption searchOption, int fileCount = 3)
+		public static HashSet<string> ModifyTestEnvironment(string testEnvironment, SearchOption searchOption, int fileCount = 3, bool isRandomCount = true)
 		{
 			var random = new Random();
 			string[] testFiles = Directory.GetFiles(testEnvironment, "*", searchOption).Where(file => !Path.GetFileName(file).Contains("baseline", StringComparison.OrdinalIgnoreCase)).ToArray();
 			int testFileCount = testFiles.Length;
 			if (testFileCount <= 0) throw new InvalidOperationException("No files available for modification in the test environment.");
-			
 
-			int modificationCount = random.Next(1, fileCount + 1); // Randomly choose how many files to modify (between 1 and fileCount)
+			int modificationCount = 0;
+			if (isRandomCount)
+				modificationCount = random.Next(1, fileCount + 1); // Randomly choose how many files to modify (between 1 and fileCount)
+			else modificationCount = fileCount;
 			if(modificationCount > testFileCount) modificationCount = testFileCount; // Ensure more files are not modified than exist
 
 			HashSet<string> filesToModify = new HashSet<string>();
@@ -74,16 +77,19 @@ namespace SentinelFIM.Tests.Shared
 			}
 			return filesToModify;
 		}
-		public static HashSet<string> DeleteFilesFromTestEnvironment(string testEnvironment, SearchOption searchOption, int fileCount = 3)
+		public static HashSet<string> DeleteFilesFromTestEnvironment(string testEnvironment, SearchOption searchOption, int fileCount = 3, bool isRandomCount = true)
 		{
 			var random = new Random();
 			string[] testFiles = Directory.GetFiles(testEnvironment, "*", searchOption).Where(file => !Path.GetFileName(file).Contains("baseline", StringComparison.OrdinalIgnoreCase)).ToArray();
 			int testFileCount = testFiles.Length;
 			if (testFileCount <= 0) throw new InvalidOperationException("No files available for deletion in the test environment.");
 
+			int deletionCount = 0;
+			if (isRandomCount)
+				deletionCount = random.Next(1, fileCount + 1); // Randomly choose how many files to modify (between 1 and fileCount)
+			else deletionCount = fileCount;
+			if (deletionCount > testFileCount) deletionCount = testFileCount; // Ensure more files are not modified than exis
 
-			int deletionCount = random.Next(1, fileCount + 1); // Randomly choose how many files to delete (between 1 and fileCount)
-			if(deletionCount > testFileCount) deletionCount = testFileCount; // Ensure more files are not deleted than exist
 
 			HashSet<string> filesToDelete = new HashSet<string>();
 
@@ -119,10 +125,19 @@ namespace SentinelFIM.Tests.Shared
 			&& Path.GetFileName(path).StartsWith("all", StringComparison.OrdinalIgnoreCase));
 			return result ?? throw new InvalidOperationException("No recursive baseline file found in the specified directory.");
 		}
-
+		/// <summary>
+		/// Creates test environment for monitoring
+		/// </summary>
+		/// <param name="searchOption"></param>
+		/// <param name="baselineCreationOption"></param>
+		/// <param name="testOperation"></param>
+		/// <param name="cancellationToken"></param>
+		/// <param name="fileCount"></param>
+		/// <param name="isRandomCount"></param>
+		/// <returns></returns>
 		public static (string tempEnvPath, HashSet<string> modifiedFiles) CreateTestEnvironment(SearchOption searchOption,
 			BaselineCreationOption baselineCreationOption, TestOperation testOperation,
-			CancellationToken cancellationToken, int fileCount = 3)
+			CancellationToken cancellationToken, int fileCount = 3, bool isRandomCount = true)
 		{
 			// Target directory for the test environment
 			var testDirectoryPath = FileSystemTestUtilities.CreateRandomTestDirectory();
@@ -153,15 +168,26 @@ namespace SentinelFIM.Tests.Shared
 			switch (testOperation)
 			{
 				case TestOperation.Modify:
-					filesChanged = MonitoringTestUtilities.ModifyTestEnvironment(testDirectoryPath, searchOption, fileCount);
+					filesChanged = MonitoringTestUtilities.ModifyTestEnvironment(testDirectoryPath, searchOption, fileCount, isRandomCount);
 					break;
 				case TestOperation.Delete:
-					filesChanged = MonitoringTestUtilities.DeleteFilesFromTestEnvironment(testDirectoryPath, searchOption, fileCount);
+					filesChanged = MonitoringTestUtilities.DeleteFilesFromTestEnvironment(testDirectoryPath, searchOption, fileCount, isRandomCount);
+					break;
+				case TestOperation.None:
 					break;
 			}
 
 			// Path to the temporary test environment for scanning & the set of modified files for validation
 			return (testDirectoryPath, filesChanged);
 		}
+		/// <summary>
+		/// Overload removing all optional features for test environment
+		/// </summary>
+		/// <param name="searchOption"></param>
+		/// <param name="baselineCreationOption"></param>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		public static string CreateTestEnvironment(SearchOption searchOption,BaselineCreationOption baselineCreationOption,
+			CancellationToken cancellationToken) => CreateTestEnvironment(searchOption, baselineCreationOption, TestOperation.None, cancellationToken).tempEnvPath;
 	}
 }
