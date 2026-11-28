@@ -71,9 +71,9 @@ namespace SentinelFIM.Infrastructure.Baseline.Store.Json
 				JsonSerializer.Serialize(fileStream, document, serializerOptions);
 				timer.Stop();
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
-				_logger.LogError("Failed to save baseline file: {Path}", createdOutputFile);
+				_logger.LogError("Failed to save baseline file: {Path}. Error: {Error}.", createdOutputFile, ex.Message);
 				timer.Stop();
 				throw;
 			}

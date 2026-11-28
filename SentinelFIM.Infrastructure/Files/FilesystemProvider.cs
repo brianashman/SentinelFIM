@@ -22,9 +22,9 @@ namespace SentinelFIM.Infrastructure.Files
 			{
 				files = Directory.EnumerateFiles(path);
 			}
-			catch (UnauthorizedAccessException)
+			catch (UnauthorizedAccessException ex)
 			{
-				_logger.LogWarning("Access denied to directory: {path}", path);
+				_logger.LogWarning("Access denied to directory: {path}. Error: {error}", path, ex.Message);
 				yield break;
 			}
 			foreach (var file in files)
@@ -37,9 +37,9 @@ namespace SentinelFIM.Infrastructure.Files
 			{
 				directories = Directory.EnumerateDirectories(path);
 			}
-			catch (UnauthorizedAccessException)
+			catch (UnauthorizedAccessException ex)
 			{
-				_logger.LogWarning("Access denied to directory: {path}", path);
+				_logger.LogWarning("Access denied to directory: {path}. Error: {error}", path, ex.Message);
 				yield break;
 			}
 			foreach (var directory in directories)
@@ -69,19 +69,19 @@ namespace SentinelFIM.Infrastructure.Files
 				};
 			}
 
-			catch (UnauthorizedAccessException)
+			catch (UnauthorizedAccessException ex)
 			{
-				_logger.LogWarning("Access denied to directory: {path}", path);
+				_logger.LogWarning("Access denied to directory: {path}. Error: {error}", path, ex.Message);
 				throw;
 			}
-			catch (PathTooLongException)
+			catch (PathTooLongException ex)
 			{
-				_logger.LogError("The specified path is too long: {path}", path);
+				_logger.LogError("The specified path is too long: {path}. Error: {error}", path, ex.Message);
 				throw;
 			}
-			catch (IOException)
+			catch (IOException ex)
 			{
-				_logger.LogError("An I/O error occurred while accessing the directory: {path}", path);
+				_logger.LogError("An I/O error occurred while accessing the directory: {path}. Error: {error}", path, ex.Message);
 				throw;
 			}
 		}

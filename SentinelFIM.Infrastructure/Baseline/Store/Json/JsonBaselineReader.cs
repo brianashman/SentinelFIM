@@ -37,11 +37,20 @@ namespace SentinelFIM.Infrastructure.Baseline.Store.Json
 
 			_logger.LogInformation("Loading baseline from file: {Path}", path);
 			using var stream = baseline.OpenRead();
-			var scanResults = JsonSerializer.Deserialize<BaselineDocument>(
-				stream, 
-				serializerOptions
-				);
-			return scanResults!;	
+			BaselineDocument? scanResults;
+			try
+			{
+				scanResults = JsonSerializer.Deserialize<BaselineDocument>(
+					stream, 
+					serializerOptions
+					);
+			}
+			catch(JsonException ex)
+			{
+				_logger.LogError("Failed to deserialize baseline file: {Path}. Error: {Error}.", path, ex.Message);
+				throw;
+			}
+			return scanResults ?? throw new InvalidOperationException("Failed to load baseline.");
 		}
 	}
 }

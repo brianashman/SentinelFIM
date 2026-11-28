@@ -1,4 +1,6 @@
-﻿namespace SentinelFIM.Tests.Shared
+﻿using SentinelFIM.Tests.Models;
+
+namespace SentinelFIM.Tests.Shared
 {
 	//Reminder to add the cts timeout for tests
 	public static class MonitoringTestUtilities
@@ -91,6 +93,41 @@
 			var result = files.FirstOrDefault(path => Path.GetFileName(path).Contains("baseline", StringComparison.OrdinalIgnoreCase) 
 			&& Path.GetFileName(path).StartsWith("all", StringComparison.OrdinalIgnoreCase));
 			return result ?? throw new InvalidOperationException("No recursive baseline file found in the specified directory.");
+		}
+		public static (string tempEnvPath, HashSet<string> modifiedFiles) CreateTestEnvironment(SearchOption searchOption,
+			BaselineCreationOption baselineCreationOption,
+			CancellationToken cancellationToken, int fileCount = 3)
+		{
+			// Target directory for the test environment
+			var testDirectoryPath = FileSystemTestUtilities.CreateRandomTestDirectory();
+
+			// Existing Test Environment Paths
+			var testEnvironmentPaths = MonitoringTestUtilities.GetTestEnvironment();
+
+			// Copies the test environment to the temporary directory for testing
+			MonitoringTestUtilities.CopyTestEnvironmentToTemp(testEnvironmentPaths, testDirectoryPath);
+
+			//Creates both root and recursive baseline file for the test environment to be used for scanning
+			switch (baselineCreationOption)
+			{
+				case BaselineCreationOption.RootOnly:
+					BaselineTestUtilities.CreateRootBaselineAtPath(testDirectoryPath, cancellationToken);
+					break;
+				case BaselineCreationOption.RecursiveOnly:
+					BaselineTestUtilities.CreateRecursiveBaselineAtPath(testDirectoryPath, cancellationToken);
+					break;
+				case BaselineCreationOption.RootAndRecursive:
+					BaselineTestUtilities.CreateAllBaselinesAtPath(testDirectoryPath, cancellationToken);
+					break;
+			}
+			
+
+
+			// Modifies the test environment to simulate changes for testing purposes
+			var filesChanged = MonitoringTestUtilities.ModifyTestEnvironment(testDirectoryPath, searchOption, fileCount);
+
+			// Path to the temporary test environment for scanning & the set of modified files for validation
+			return (testDirectoryPath, filesChanged);
 		}
 	}
 }
